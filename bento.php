@@ -734,9 +734,9 @@ function redirect_to($path, $code = 302, $delay = 0)
  */
 function csrf_token($renew = false)
 {
-    if (!($csrf = config('csrf'))) return null;
-
     if (!isset($_SESSION)) session_start();
+
+    $csrf = config('csrf');
 
     if (!isset($_SESSION[$csrf]) || $renew) {
         $_SESSION[$csrf] = md5(uniqid(mt_rand(), true));
@@ -755,7 +755,7 @@ function csrf_token($renew = false)
  */
 function csrf_field($name = null)
 {
-    if (!($csrf = $name ?: config('csrf'))) return null;
+    $csrf = $name ?: config('csrf');
 
     return '<input type="hidden" name="' . $csrf . '" value="' . csrf_token() .
         '">';
@@ -772,7 +772,7 @@ function csrf_field($name = null)
  */
 function prevent_csrf($name = null)
 {
-    if (!($csrf = $name ?: config('csrf'))) return null;
+    $csrf = $name ?: config('csrf');
 
     $token = csrf_token();
 
