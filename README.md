@@ -12,7 +12,7 @@ and you're all set. The alternative is [through composer][Composer]:
 ```
 {
     "require": {
-        "bento/bento": "1.0.*"
+        "bento/bento": "@dev"
     },
     "minimum-stability": "dev"
 }
