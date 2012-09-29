@@ -7,7 +7,16 @@ is very natural to use, letting the programmer concentrate on the task at hand.
 
 Bento is self contained; it consists of a single PHP file. Simply copy the file
 into your lib or vendor directory, require it from your front controller script,
-and you're all set.
+and you're all set. The alternative is [through composer][Composer]:
+
+```
+{
+    "require": {
+        "bento/bento": "1.0.*"
+    },
+    "minimum-stability": "dev"
+}
+```
 
 PHP 5.3 or newer is required.
 
@@ -404,6 +413,7 @@ Bento is released under the [MIT License][MIT].
 Bento is influenced by many web frameworks. Among them are [Rails], [Sinatra],
 [Limonade], [Bottle], and [Flask].
 
+[Composer]: http://getcomposer.org/
 [CSRF]: http://en.wikipedia.org/wiki/Cross-site_request_forgery
 [PRG]: http://en.wikipedia.org/wiki/Post/Redirect/Get
 [MIT]: http://en.wikipedia.org/wiki/MIT_License

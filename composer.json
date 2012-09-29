@@ -1,0 +1,19 @@
+{
+    "name": "bento/bento",
+    "description": "Simple micro-framework",
+    "keywords": ["framework", "microframework", "router"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nofriandi Ramenta",
+            "email": "nramenta@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "autoload": {
+        "files": ["src/bento.php"]
+    }
+}
