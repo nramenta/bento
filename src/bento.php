@@ -956,7 +956,7 @@ function dispatch($method, $path)
 }
 
 /**
- * Prepares the request cycle and runs the dispatcher. 
+ * Prepares the request cycle and runs the dispatcher.
  *
  * @param string $file Path to router script; should generally be __FILE__
  *
