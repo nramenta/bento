@@ -100,7 +100,20 @@ Some examples of routes:
     /blog/<year>/<month>/<date>/<natural:id>-<title>
 
 Rules are defined using regular expressions. A full set of built-in rules is
-defined in the configuration key "rules". To add a new "non_alphanum" rule:
+defined in the configuration key "rules" as an associative array:
+
+```php
+<?php
+array(
+    'alphadash' => '[a-zA-Z0-9_-]+',
+    'alphanum'  => '[a-zA-Z0-9]',
+    'alpha'     => '[a-zA-Z]+',
+    'digits'    => '[0-9]+',
+    'natural'   => '[1-9][0-9]*',
+);
+```
+
+To add a new "non_alphanum" rule:
 
 ```php
 <?php
@@ -137,7 +150,8 @@ route_get('/about', function()
 });
 ```
 
-A request to `/about/` will result in a "404 Not Found" error.
+A request to `/about/` will result in a "404 Not Found" error. This behavior is
+consistent with most popular web servers.
 
 ### Flash sessions
 
@@ -191,11 +205,11 @@ route_post('/posts/new', function()
 {
     prevent_csrf();
 
-    // update the post ...
+    // create new post ...
 });
 ```
 
-Any CSRF-related error will result in a "400 Bad Request" invoked automatically
+Any CSRF-related errors will result in a "400 Bad Request" invoked automatically
 by calling `halt(400, 'csrf')`. Use SSL lest your CSRF tokens be subject to
 [man in the middle attacks][MITM].
 
@@ -210,7 +224,7 @@ route_get_post('/posts/<id>', function($id)
 {
     if (request_method('POST') and prevent_csrf()) {
         ...
-        // create new post
+        // update the post
         ...
         if ($success) {
             flash('notice', 'Post successfully saved. Yay!');
@@ -360,8 +374,7 @@ log_handle(LOG_EMERG, function($message)
 Handled logs will still be sent to `error_log()`. Bento supports LOG_EMERG,
 LOG_ALERT, LOG_CRIT, LOG_ERR, LOG_WARNING, LOG_NOTICE, LOG_INFO, and LOG_DEBUG.
 
-By default all levels are logged. To log only warnings and errors in your
-production code:
+By default all levels are logged. To log only warnings and errors in your code:
 
 ```php
 <?php
