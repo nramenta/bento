@@ -819,13 +819,13 @@ function e($string, $force = false)
  */
 function render_template($file, $data = array())
 {
-    if (!is_readable(func_get_arg(0))) {
+    if (!is_readable($file)) {
         throw new \RuntimeException(sprintf(
-            'template file %s is not a readable file', $file));
+            'template file %s is not readable', $file));
     }
 
-    ob_start();
     extract($data);
+    ob_start();
     include func_get_arg(0);
     return ob_get_clean();
 }
