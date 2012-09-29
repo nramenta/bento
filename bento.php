@@ -146,7 +146,8 @@ function log_write($message, $level = LOG_INFO)
 // ## Events
 
 /**
- * Registers an event handler callback.
+ * Registers an event handler callback. Callbacks can take extra arguments
+ * passed from `event_trigger()`.
  *
  * @param string   $name     Event name
  * @param callable $callback Event handler callback
