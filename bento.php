@@ -667,7 +667,11 @@ function request_path($route = null, &$matches = null, &$redirect = null)
 }
 
 /**
- * Gets or sets the request path parameters. Setting is done automatically.
+ * Returns a single or all dynamic path parameters. Pass a single argument as
+ * parameter name to return its value. Pass no arguments to get all parameters
+ * as a single associative array. The second parameter is used to set the value
+ * for a parameter; its used internally and should not be considered as a public
+ * API.
  *
  * @param string $name  Parameter name
  * @param string $value Parameter value
