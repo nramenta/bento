@@ -960,8 +960,9 @@ function run($file)
         }
     }
 
-    ob_start();
     register_shutdown_function('shutdown');
+
+    ob_start();
     dispatch(request_method(), request_path());
 }
 
