@@ -771,7 +771,8 @@ function csrf_field($name = null)
 /**
  * Prevents CSRFs on POST and GET requests by matching the server's CSRF token
  * with the one sent in with the request. The name of the POST or GET input to
- * match is defined by the 'csrf' config key.
+ * match is defined by the 'csrf' config key. This function will call `halt()`
+ * if a CSRF error is detected and therefore would not return.
  *
  * @param string $name POST or GET variable to match (optional)
  *
