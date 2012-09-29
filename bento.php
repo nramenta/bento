@@ -11,7 +11,7 @@
 /**
  * Gets or sets a config value. Pass two arguments as key and value to set a
  * configuration and return the old value. Pass a single argument as key to
- * return its value.
+ * return its value. Returns null for unrecognized configuration key.
  *
  * @param string $key   Configuration key
  * @param mixed  $value Configuration value
