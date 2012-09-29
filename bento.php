@@ -187,10 +187,12 @@ function event_trigger($name, $arg = null)
 
 /**
  * Gets or sets a flash value for the current request *and* the next request.
+ * Pass two arguments as key and value to set a flash value. Pass a single
+ * argument as key to return its value.
  *
  * @param string $key   Flash key
  * @param mixed  $value Flash value
- * @param bool   $keep  Flag to keep the flash for the next request
+ * @param bool   $keep  Keep the flash for the next request; defaults to true
  *
  * @return mixed
  */
