@@ -636,6 +636,19 @@ function base_url()
 }
 
 /**
+ * Tests if a request was made with XMLHttpRequest.
+ *
+ * @param string $requested_with HTTP_X_REQUESTED_WITH header value
+ *
+ * @return bool Boolean true if yes, false otherwise
+ */
+function is_ajax($requested_with = 'XMLHttpRequest')
+{
+    return isset($_SERVER['HTTP_X_REQUESTED_WITH']) ?
+        $_SERVER['HTTP_X_REQUESTED_WITH'] === $requested_with : false;
+}
+
+/**
  * Returns the request method or tests if the current request method matches the
  * one given as argument. Request methods are *case sensitive*.
  *

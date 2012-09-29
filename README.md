@@ -243,7 +243,7 @@ route_get_post('/posts/<id>', function($id)
 });
 ```
 
-There are a number of path, URL and redirection helper functions:
+There are a number of request, path, URL and redirection helper functions:
 
 - `request_method()`: Gets or tests the current request method.
 - `request_path()`: Gets or tests the current request path.
@@ -251,6 +251,7 @@ There are a number of path, URL and redirection helper functions:
 - `url_for()`: Returns the URL for a given path.
 - `base_path()`: Returns the base path.
 - `base_url()`: Returns the base URL.
+- `is_ajax()`: Tests if the request was made with XMLHttpRequest.
 - `params()`: Returns a dynamic path variable.
 - `redirect()`: Redirects to a given URL.
 - `redirect_to()`: Redirects to the URL of a given path.
