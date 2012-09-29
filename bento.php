@@ -256,7 +256,7 @@ function flash_now($key = null, $value = null)
  *
  * @param string $key Flash key; leave empty to keep all flash values
  *
- * @return bool true on success, false otherwise
+ * @return bool Boolean true on success, false otherwise
  */
 function flash_keep($key = null)
 {
@@ -275,7 +275,7 @@ function flash_keep($key = null)
  *
  * @param string $key Flash key; leave empty to discard all flash values
  *
- * @return bool true on success, false otherwise
+ * @return bool Boolean true on success, false otherwise
  */
 function flash_discard($key = null)
 {
@@ -294,7 +294,7 @@ function flash_discard($key = null)
  *
  * @param string $key Flash key; leave empty to remove all flash values
  *
- * @return bool true on success, false otherwise
+ * @return bool Boolean true on success, false otherwise
  */
 function flash_remove($key = null)
 {
@@ -314,7 +314,7 @@ function flash_remove($key = null)
  *
  * This function is called automatically and *should never* be called manually.
  *
- * @return bool true on success, false otherwise
+ * @return bool Boolean true on success, false otherwise
  */
 function flash_write()
 {
@@ -482,7 +482,7 @@ function route_halt($code = null, $callback = null)
  * @param array  $matches  Array of matching route segments (optional)
  * @param bool   $redirect Flag to indicate if a redirect is needed (optional)
  *
- * @return bool true if matches, false otherwise
+ * @return bool Boolean true if matches, false otherwise
  */
 function route_match($route, $path, &$matches = null, &$redirect = null)
 {
@@ -774,7 +774,7 @@ function csrf_field($name = null)
  *
  * @param string $name POST or GET variable to match (optional)
  *
- * @return bool true on success, false otherwise
+ * @return bool|null Boolean true on success, null otherwise (does not return)
  */
 function prevent_csrf($name = null)
 {
