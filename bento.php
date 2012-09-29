@@ -170,10 +170,11 @@ function event_register($name = null, $callback = null)
  * Triggers a named event. Extra arguments are passed on to the event handler
  * callbacks.
  *
- * @param string $name Event name
- * @param array  $args Arguments for the event handlers
+ * @param string $name    Event name
+ * @param mixed  $arg     Argument for the event handlers
+ * @param mixed  $arg,... Unlimited optional arguments for the event handlers
  */
-function event_trigger($name, $args = array())
+function event_trigger($name, $arg = null)
 {
     $args = func_get_args();
     $name = array_shift($args);
