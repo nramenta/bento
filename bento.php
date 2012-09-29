@@ -511,11 +511,11 @@ function route_match($route, $path, &$matches = null, &$redirect = null)
 }
 
 /**
- * Returns HTTP status string.
+ * Returns HTTP status string or null for unrecognized HTTP status code.
  *
  * @param int $code HTTP status code
  *
- * @return string
+ * @return string|null
  */
 function http_status($code = null)
 {
