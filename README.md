@@ -7,14 +7,14 @@ is very natural to use, letting the programmer concentrate on the task at hand.
 
 Bento is self contained; it consists of a single PHP file. Simply copy the file
 into your lib or vendor directory, require it from your front controller script,
-and you're all set. The alternative is [through composer][Composer]:
+and you're all set. The alternative is through [composer][Composer]; the minimum
+composer.json configuration is:
 
 ```
 {
     "require": {
         "bento/bento": "@dev"
-    },
-    "minimum-stability": "dev"
+    }
 }
 ```
 
@@ -41,6 +41,8 @@ location / {
     try_file $uri $uri/ /index.php;
 }
 ```
+
+### Built-in server
 
 To use the built-in server available in PHP 5.4, invoke the following command
 from your terminal:
