@@ -51,7 +51,7 @@ function config($key = null, $value = null)
 
 /**
  * Runs a callable with an array of arguments. Throws a RuntimeError on invalid
- * callbacks.
+ * callables.
  *
  * @param callable $callable Callable to run
  * @param array    $args     Arguments for the callable
