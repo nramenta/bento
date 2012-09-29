@@ -226,10 +226,9 @@ function flash($key = null, $value = null, $keep = true)
 }
 
 /**
- * Gets or sets a flash value only for the current request.
- *
- * This function is useful if you plan on using the flash mechanism as a central
- * messaging system in your app, a la Rails.
+ * Gets or sets a flash value only for the current request. Pass two arguments
+ * as key and value to set a flash value. Pass a single argument as key to
+ * return its value.
  *
  * @param string $key   Flash key
  * @param mixed  $value Flash value
