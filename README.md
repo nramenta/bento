@@ -262,6 +262,7 @@ There are a number of request, path, URL and redirection helper functions:
 - `url_for()`: Returns the URL for a given path.
 - `base_path()`: Returns the base path.
 - `base_url()`: Returns the base URL.
+- `is_https()`: Tests if the request was made over SSL.
 - `is_ajax()`: Tests if the request was made with XMLHttpRequest.
 - `params()`: Returns a dynamic path variable.
 - `redirect()`: Redirects to a given URL.
