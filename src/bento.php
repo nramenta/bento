@@ -636,6 +636,17 @@ function base_url()
 }
 
 /**
+ * Tests if a request was made over SSL.
+ *
+ * @param bool Boolean true if yes, false otherwise
+ */
+function is_https()
+{
+    return isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) &&
+        $_SERVER['HTTPS'] != 'off';
+}
+
+/**
  * Tests if a request was made with XMLHttpRequest.
  *
  * @param string $requested_with HTTP_X_REQUESTED_WITH header value
