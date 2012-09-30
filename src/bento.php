@@ -587,6 +587,30 @@ function shutdown()
 // ## Paths and URLs
 
 /**
+ * Tests if a request was made over SSL.
+ *
+ * @param bool Boolean true if yes, false otherwise
+ */
+function is_https()
+{
+    return isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) &&
+        $_SERVER['HTTPS'] != 'off';
+}
+
+/**
+ * Tests if a request was made with XMLHttpRequest.
+ *
+ * @param string $requested_with HTTP_X_REQUESTED_WITH header value
+ *
+ * @return bool Boolean true if yes, false otherwise
+ */
+function is_ajax($requested_with = 'XMLHttpRequest')
+{
+    return isset($_SERVER['HTTP_X_REQUESTED_WITH']) ?
+        $_SERVER['HTTP_X_REQUESTED_WITH'] === $requested_with : false;
+}
+
+/**
  * Returns a URL for a specific path. To get the URL of the current request,
  * call this function without arguments.
  *
@@ -596,8 +620,7 @@ function shutdown()
  */
 function url_for($path = null)
 {
-    $schema = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ?
-        'https://' : 'http://';
+    $schema = is_https() ? 'https://' : 'http://';
 
     $host = $_SERVER['HTTP_HOST'];
 
@@ -633,30 +656,6 @@ function base_path($path = null)
 function base_url()
 {
     return url_for('/');
-}
-
-/**
- * Tests if a request was made over SSL.
- *
- * @param bool Boolean true if yes, false otherwise
- */
-function is_https()
-{
-    return isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) &&
-        $_SERVER['HTTPS'] != 'off';
-}
-
-/**
- * Tests if a request was made with XMLHttpRequest.
- *
- * @param string $requested_with HTTP_X_REQUESTED_WITH header value
- *
- * @return bool Boolean true if yes, false otherwise
- */
-function is_ajax($requested_with = 'XMLHttpRequest')
-{
-    return isset($_SERVER['HTTP_X_REQUESTED_WITH']) ?
-        $_SERVER['HTTP_X_REQUESTED_WITH'] === $requested_with : false;
 }
 
 /**
