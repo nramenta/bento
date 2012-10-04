@@ -1,6 +1,6 @@
 # Bento - A simple PHP micro framework
 
-Bento  is implemented as a collection of functions. This results in an API that
+Bento is implemented as a collection of functions. This results in an API that
 is very natural to use, letting the programmer concentrate on the task at hand.
 
 ## Installation
