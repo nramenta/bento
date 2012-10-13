@@ -452,6 +452,30 @@ function route_any($route, $callback)
 }
 
 /**
+ * Registers a callback to the 'route_before' event.
+ *
+ * @param callable $callback 'route_before' event handler callback
+ *
+ * @return mixed
+ */
+function route_before($callback)
+{
+    return event_register('route_before', $callback);
+}
+
+/**
+ * Registers a callback to the 'route_after' event.
+ *
+ * @param callable $callback 'route_after' event handler callback
+ *
+ * @return mixed
+ */
+function route_after($callback)
+{
+    return event_register('route_after', $callback);
+}
+
+/**
  * Gets or sets a halt handler for a specific code. Callback functions can take
  * a message parameter which can be anything from simple strings to elaborate
  * structures.

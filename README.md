@@ -360,6 +360,8 @@ Built-in events:
   handler exits prematurely, e.g., by invoking `halt()`, this event is never
   triggered.
 
+The functions `route_before()` and `route_after()` are provided as convenience.
+
 ### Logging
 
 Bento provides a wrapper function around `error_log()`:
