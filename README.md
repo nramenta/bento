@@ -112,11 +112,11 @@ Some examples of routes:
     /blog/<#:year>/<#:month>/<#:date>/<#:id>-<$:title>
     /files/<*:path>
 
-Built-in rules are:
+There are three built-in rules:
 
-- `#`: digits only, equivalent to `[0-9]+`.
+- `#`: digits only, equivalent to `\d+`.
 - `$`: alphanums and dashes only, equivalent to `[a-zA-Z0-9-_]+`.
-- `*`: any characters including `/`.
+- `*`: any characters including `/`, equivalent to `.+`.
 
 Custom rules are defined using regular expressions:
 
