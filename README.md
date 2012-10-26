@@ -102,34 +102,30 @@ The syntax for dynamic paths is:
     <rule:name>
 
 The rule is optional; if you omit it, be sure to also omit the `:` separator.
+Named paths without rules matches all characters up to but not including `/`.
 
 Some examples of routes:
 
-    /posts/<natural:id>
-    /users/<alphanum:username>
+    /posts/<#:id>
+    /users/<username>
     /pages/about
-    /blog/<year>/<month>/<date>/<natural:id>-<title>
+    /blog/<#:year>/<#:month>/<#:date>/<#:id>-<$:title>
+    /files/<*:path>
 
-Rules are defined using regular expressions. A full set of built-in rules is
-defined in the configuration key "rules" as an associative array:
+Built-in rules are:
 
-```php
-<?php
-array(
-    'alphadash' => '[a-zA-Z0-9_-]+',
-    'alphanum'  => '[a-zA-Z0-9]',
-    'alpha'     => '[a-zA-Z]+',
-    'digits'    => '[0-9]+',
-    'natural'   => '[1-9][0-9]*',
-);
-```
+- `#`: digits only, equivalent to `[0-9]+`.
+- `$`: alphanums and dashes only, equivalent to `[a-zA-Z0-9-_]+`.
+- `*`: any characters including `/`.
 
-To add a new "non_alphanum" rule:
+Custom rules are defined using regular expressions:
 
-```php
-<?php
-config('rules', config('rules') + array('non_alphanum' => '[^a-zA-Z]'));
-```
+    /users/<[a-zA-Z0-9_]+:username>
+
+Using the `#` character inside a custom rule should be avoided; URL paths cannot
+contain any `#` characters as they are interpreted as URL fragments. If you want
+to use them to match url-encoded `#` (encoded as `%23`), you must escape them
+as `\#`.
 
 Routes are matched first-only, meaning if a route matches the request path then
 its route handler will be executed and no more routes will be matched. Requests

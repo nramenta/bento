@@ -23,13 +23,6 @@ function config($key = null, $value = null)
     static $storage = array(
         'flash' => '_flash',
         'csrf'  => '_csrf',
-        'rules' => array(
-            'alphadash' => '[a-zA-Z0-9_-]+',
-            'alphanum'  => '[a-zA-Z0-9]',
-            'alpha'     => '[a-zA-Z]+',
-            'digits'    => '[0-9]+',
-            'natural'   => '[1-9][0-9]*',
-        ),
         'log_levels' => array(
             LOG_EMERG, LOG_ALERT, LOG_CRIT, LOG_ERR,
             LOG_WARNING, LOG_NOTICE, LOG_INFO, LOG_DEBUG,
@@ -499,8 +492,7 @@ function route_halt($code = null, $callback = null)
 }
 
 /**
- * Tests if a route matches a given path. Throws a RuntimeException if the route
- * contains undefined rules.
+ * Tests if a route matches a given path.
  *
  * @param string $route    Route to match
  * @param string $path     Request path
@@ -511,27 +503,33 @@ function route_halt($code = null, $callback = null)
  */
 function route_match($route, $path, &$matches = null, &$redirect = null)
 {
-    $rules = config('rules') ?: array();
-
     static $replace;
     if (!isset($replace)) {
-        $replace = function($match) use (&$rules) {
-            if ($match['rule'] && !isset($rules[$match['rule']])) {
-                throw new \RuntimeException('no rule exists for ' . $match[1]);
+        $replace = function($match) {
+            if ($match['rule'] === '') {
+                return '(?P<' . $match['name'] . '>[^\/]+)';
+            } elseif ($match['rule'] === '#') {
+                return '(?P<' . $match['name'] . '>\d+)';
+            } elseif ($match['rule'] === '$') {
+                return '(?P<' . $match['name'] . '>[a-zA-Z0-9-_]+)';
+            } elseif ($match['rule'] === '*') {
+                return '(?P<' . $match['name'] . '>.+)';
+            } else {
+                return '(?P<' . $match['name'] . '>' . $match['rule'] . ')';
             }
-            return '(?P<' . $match[2] . '>' . (empty($match[1]) ?
-                '[^\/]+' : $rules[$match[1]]) . ')';
         };
     }
 
-    $pattern = '/<(?:(?P<rule>[a-z_][a-zA-Z0-9_]+):)?' .
-        '(?P<name>[a-z_][a-zA-Z0-9_]+)>/';
+    static $pattern = '/<(?:(?P<rule>.+?):)?(?P<name>[a-z_][a-z0-9_]+)>/i';
 
     $trailing = preg_match('/\/$/', $route);
     $redirect = $trailing && !preg_match('/\/$/', $path);
-    $regex = preg_replace_callback($pattern, $replace, $route) .
-        ($trailing ? '?' : null);
-    return preg_match('@^' . $regex . '$@', $path, $matches);
+
+    return preg_match(
+        '#^' . preg_replace_callback($pattern, $replace, $route) .
+        ($trailing ? '?' : null) . '$#',
+        urldecode($path), $matches
+    );
 }
 
 /**
