@@ -634,20 +634,46 @@ function is_ajax($requested_with = 'XMLHttpRequest')
 
 /**
  * Returns a URL for a specific path. To get the URL of the current request,
- * call this function without arguments.
+ * pass null as the first argument. Query string array passed as the second
+ * argument overrides the current ones.
  *
  * @param string $path Path for the returned URL (optional)
+ * @param array  $args Query string for the returned URL (optional)
  *
  * @return string
  */
-function url_for($path = null)
+function url_for($path = null, $args = array())
 {
+    if (func_num_args() === 1) {
+        if (is_array(func_get_arg(0))) {
+            $path = null;
+            $args = func_get_arg(0);
+        }
+    }
+
     $schema = is_https() ? 'https://' : 'http://';
 
     $host = $_SERVER['HTTP_HOST'];
 
-    return $schema . $host .
-        ($path ? base_path($path) : $_SERVER['REQUEST_URI']);
+    $parts = parse_url(
+        $schema . $host .
+        ($path ? base_path($path) : $_SERVER['REQUEST_URI'])
+    );
+
+    if (isset($parts['query'])) {
+        parse_str($parts['query'], $query);
+        $query = array_merge($query, $args);
+    } else {
+        $query = $args;
+    }
+
+    if ($query) {
+        $parts['query'] = http_build_query($query);
+    }
+
+    return $schema . $host . $parts['path'] .
+        (isset($parts['query']) ? '?' . $parts['query'] : null) .
+        (isset($parts['fragment']) ? '#' . $parts['fragment'] : null);
 }
 
 /**
