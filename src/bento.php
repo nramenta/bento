@@ -742,12 +742,11 @@ function request_path($route = null, &$matches = null, &$redirect = null)
 /**
  * Returns a single or all dynamic path parameters. Pass a single argument as
  * parameter name to return its value. Pass no arguments to get all parameters
- * as a single associative array. Returns null for unrecognized parameters.
- * The second parameter is used to set the value for a parameter; its used
- * internally and should not be considered as a public API.
+ * as a single associative array. The second argument is used to set the default
+ * value for the parameter.
  *
  * @param string $name  Parameter name
- * @param string $value Parameter value
+ * @param string $value Parameter default value; defaults to null
  *
  * @return string|null
  */
@@ -756,7 +755,10 @@ function params($name = null, $value = null)
     static $params = array();
 
     if (func_num_args() > 1) {
-        $params[$name] = $value;
+        if (!isset($params[$name])) {
+            $params[$name] = $value;
+        }
+        return $params[$name];
     } elseif (func_num_args()) {
         return isset($params[$name]) ? $params[$name] : null;
     } else {
