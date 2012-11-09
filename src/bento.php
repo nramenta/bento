@@ -620,7 +620,7 @@ function is_https()
 }
 
 /**
- * Tests if a request was made with XMLHttpRequest.
+ * Tests if the request was made with XMLHttpRequest.
  *
  * @param string $requested_with HTTP_X_REQUESTED_WITH header value
  *
