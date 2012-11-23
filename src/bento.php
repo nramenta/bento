@@ -622,14 +622,12 @@ function is_https()
 /**
  * Tests if the request was made with XMLHttpRequest.
  *
- * @param string $requested_with HTTP_X_REQUESTED_WITH header value
- *
  * @return bool Boolean true if yes, false otherwise
  */
-function is_ajax($requested_with = 'XMLHttpRequest')
+function is_ajax()
 {
-    return isset($_SERVER['HTTP_X_REQUESTED_WITH']) ?
-        $_SERVER['HTTP_X_REQUESTED_WITH'] === $requested_with : false;
+    return isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+        $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
 }
 
 /**
