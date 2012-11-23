@@ -260,6 +260,7 @@ There are a number of request, path, URL and redirection helper functions:
 - `base_url()`: Returns the base URL.
 - `is_https()`: Tests if the request was made over SSL.
 - `is_ajax()`: Tests if the request was made with XMLHttpRequest.
+- `is_pjax()`: Tests if the request was made with PJAX.
 - `params()`: Returns a dynamic path variable.
 - `redirect()`: Redirects to a given URL.
 - `redirect_to()`: Redirects to the URL of a given path.

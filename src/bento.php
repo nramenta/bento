@@ -633,6 +633,16 @@ function is_ajax($requested_with = 'XMLHttpRequest')
 }
 
 /**
+ * Tests if the request is was made with PJAX.
+ *
+ * @return bool Boolean true if yes, false otherwise
+ */
+function is_pjax()
+{
+    return isset($_SERVER['HTTP_X_PJAX']);
+}
+
+/**
  * Returns a URL for a specific path. To get the URL of the current request,
  * pass null as the first argument. Query string array passed as the second
  * argument overrides the current ones.
