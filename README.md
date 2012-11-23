@@ -280,7 +280,7 @@ calling `halt()`:
 
 ```php
 <?php
-route_get('/blog/<natural:id>', function($id)
+route_get('/blog/<#:id>', function($id)
 {
     ...
     halt('database', 'connection_error');
