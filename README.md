@@ -13,7 +13,7 @@ composer.json configuration is:
 ```
 {
     "require": {
-        "bento/bento": "@dev"
+        "bento/bento": "@stable"
     }
 }
 ```
