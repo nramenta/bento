@@ -1,7 +1,8 @@
 # Bento - A simple PHP micro framework
 
-Bento is implemented as a collection of functions. This results in an API that
-is very natural to use, letting the programmer concentrate on the task at hand.
+Bento provides a simple yet flexible routing system, built-in CSRF prevention,
+flash session variables, an events system, a dead-simple logging system, and
+numerous little helper functions to make developing web apps suck less.
 
 ## Installation
 
