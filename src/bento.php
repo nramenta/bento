@@ -408,7 +408,7 @@ function put($route, $callback)
  * @param string   $route    Route pattern
  * @param callable $callback Route handler callback
  */
-function route_delete($route, $callback)
+function delete($route, $callback)
 {
     route('DELETE', $route, $callback);
 }
