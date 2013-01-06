@@ -82,7 +82,7 @@ Built-in routing functions to map routes to callbacks:
 - `put()`: Routes PUT requests.
 - `delete()`: Routes DELETE requests.
 - `head()`: Routes HEAD requests.
-- `route_options()`: Routes OPTIONS requests.
+- `options()`: Routes OPTIONS requests.
 - `route_any()`: Routes all the above HTTP methods.
 
 All routes implicitly handle the OPTIONS method. All routing functions take two

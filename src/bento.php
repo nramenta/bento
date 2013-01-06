@@ -430,7 +430,7 @@ function head($route, $callback)
  * @param string   $route    Route pattern
  * @param callable $callback Route handler callback
  */
-function route_options($route, $callback)
+function options($route, $callback)
 {
     route('OPTIONS', $route, $callback);
 }
