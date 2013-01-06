@@ -441,7 +441,7 @@ function options($route, $callback)
  * @param string   $route    Route pattern
  * @param callable $callback Route handler callback
  */
-function route_any($route, $callback)
+function any($route, $callback)
 {
     route(array('GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS'),
         $route, $callback);
