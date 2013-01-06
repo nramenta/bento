@@ -77,7 +77,7 @@ Built-in routing functions to map routes to callbacks:
 
 - `get()`: Routes GET requests and acts as the fallback router for HEAD
   requests.
-- `route_post()`: Routes POST requests.
+- `post()`: Routes POST requests.
 - `route_get_post()`: Routes GET and POST requests.
 - `route_put()`: Routes PUT requests.
 - `route_delete()`: Routes DELETE requests.
@@ -209,7 +209,7 @@ route handler, simply call `prevent_csrf()`:
 
 ```php
 <?php
-route_post('/posts/new', function()
+post('/posts/new', function()
 {
     prevent_csrf();
 

@@ -372,7 +372,7 @@ function get($route, $callback)
  * @param string   $route    Route pattern
  * @param callable $callback Route handler callback
  */
-function route_post($route, $callback)
+function post($route, $callback)
 {
     route('POST', $route, $callback);
 }
