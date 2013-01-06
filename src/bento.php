@@ -361,7 +361,7 @@ function route($methods = null, $route = null, $callback = null)
  * @param string   $route    Route pattern
  * @param callable $callback Route handler callback
  */
-function route_get($route, $callback)
+function get($route, $callback)
 {
     route('GET', $route, $callback);
 }

@@ -61,7 +61,7 @@ The canonical "Hello, World!" example:
 <?php
 require 'path/to/bento.php';
 
-route_get('/hello/<world>', function($world)
+get('/hello/<world>', function($world)
 {
     echo 'Hello, ' . e($world);
 });
@@ -75,7 +75,7 @@ value returned by `run(__FILE__)`. The following usage examples will omit the
 
 Built-in routing functions to map routes to callbacks:
 
-- `route_get()`: Routes GET requests and acts as the fallback router for HEAD
+- `get()`: Routes GET requests and acts as the fallback router for HEAD
   requests.
 - `route_post()`: Routes POST requests.
 - `route_get_post()`: Routes GET and POST requests.
@@ -140,7 +140,7 @@ redirection to the same route ending in a forward slash:
 
 ```php
 <?php
-route_get('/books/', function()
+get('/books/', function()
 {
     echo 'Books!';
 });
@@ -152,7 +152,7 @@ route. The reverse, however, is never true:
 
 ```php
 <?php
-route_get('/about', function()
+get('/about', function()
 {
     echo 'About Us';
 });
@@ -169,14 +169,14 @@ set a flash session; pass a single argument as key to get a flash session:
 
 ```php
 <?php
-route_get('/step-1', function()
+get('/step-1', function()
 {
     ...
     flash('words', 'available in the very next request, but no further.');
     ...
 });
 
-route_get('/step-2', function()
+get('/step-2', function()
 {
     ...
     echo 'Your words were ' . flash('words');
@@ -195,7 +195,7 @@ Effortlessly protect your forms against [cross site request forgeries][CSRF]:
 
 ```php
 <?php
-route_get('/posts/new', function()
+get('/posts/new', function()
 {
     ...
     $csrf_field = csrf_field();
@@ -281,7 +281,7 @@ calling `halt()`:
 
 ```php
 <?php
-route_get('/blog/<#:id>', function($id)
+get('/blog/<#:id>', function($id)
 {
     ...
     halt('database', 'connection_error');
@@ -327,7 +327,7 @@ event by calling`event_trigger()`:
 
 ```php
 <?php
-route_get('/some/path', function()
+get('/some/path', function()
 {
     ...
     event_trigger('my_custom_event', 'This will be passed on to the callback');
@@ -366,7 +366,7 @@ Bento provides a wrapper function around `error_log()`:
 
 ```php
 <?php
-route_get('/some/path', function()
+get('/some/path', function()
 {
     ...
     log_write('something is very wrong', LOG_ERR);
@@ -401,7 +401,7 @@ as static methods in classes and register them, e.g., as follows:
 
 ```php
 <?php
-route_get('/blog/<id>', array('Blog', 'get_post'));
+get('/blog/<id>', array('Blog', 'get_post'));
 ```
 
 The callbacks will then be loaded only when needed. The same can be done for
