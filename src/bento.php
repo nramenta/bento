@@ -397,7 +397,7 @@ function form($route, $callback)
  * @param string   $route    Route pattern
  * @param callable $callback Route handler callback
  */
-function route_put($route, $callback)
+function put($route, $callback)
 {
     route('PUT', $route, $callback);
 }
