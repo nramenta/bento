@@ -378,14 +378,17 @@ function post($route, $callback)
 }
 
 /**
- * Routes GET and POST requests.
+ * Routes both GET and POST requests with automatic CSRF protection.
  *
  * @param string   $route    Route pattern
  * @param callable $callback Route handler callback
  */
-function route_get_post($route, $callback)
+function form($route, $callback)
 {
-    route(array('GET', 'POST'), $route, $callback);
+    route(array('GET', 'POST'), $route, function() use (&$callback) {
+        request_method('POST') && prevent_csrf();
+        apply($callback, func_get_args());
+    });
 }
 
 /**

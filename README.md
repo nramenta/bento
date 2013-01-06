@@ -78,7 +78,7 @@ Built-in routing functions to map routes to callbacks:
 - `get()`: Routes GET requests and acts as the fallback router for HEAD
   requests.
 - `post()`: Routes POST requests.
-- `route_get_post()`: Routes GET and POST requests.
+- `form()`: Routes both GET and POST requests with automatic CSRF protection.
 - `route_put()`: Routes PUT requests.
 - `route_delete()`: Routes DELETE requests.
 - `route_head()`: Routes HEAD requests.
@@ -228,9 +228,9 @@ duplicate form submissions, resulting in a more intuitive user interface:
 
 ```php
 <?php
-route_get_post('/posts/<id>', function($id)
+form('/posts/<id>', function($id)
 {
-    if (request_method('POST') and prevent_csrf()) {
+    if (request_method('POST')) {
         ...
         // update the post
         ...
