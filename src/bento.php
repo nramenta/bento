@@ -419,7 +419,7 @@ function delete($route, $callback)
  * @param string   $route    Route pattern
  * @param callable $callback Route handler callback
  */
-function route_head($route, $callback)
+function head($route, $callback)
 {
     route('HEAD', $route, $callback);
 }
