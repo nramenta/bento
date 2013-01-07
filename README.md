@@ -171,16 +171,12 @@ to set a flash session; pass a single argument as key to get a flash session:
 <?php
 get('/step-1', function()
 {
-    ...
     flash('words', 'available in the very next request, but no further.');
-    ...
 });
 
 get('/step-2', function()
 {
-    ...
     echo 'Your words were ' . flash('words');
-    ...
 });
 ```
 
@@ -198,9 +194,7 @@ Effortlessly protect your forms against [cross site request forgeries][CSRF]:
 <?php
 get('/posts/new', function()
 {
-    ...
     $csrf_field = csrf_field();
-    ...
     // pass this hidden field tag to your HTML form
 });
 ```
@@ -213,7 +207,6 @@ route handler, simply call `prevent_csrf()`:
 post('/posts/new', function()
 {
     prevent_csrf();
-
     // create new post ...
 });
 ```
@@ -232,9 +225,7 @@ duplicate form submissions, resulting in a more intuitive user interface:
 form('/posts/<id>', function($id)
 {
     if (request_method('POST')) {
-        ...
         // update the post
-        ...
         if ($success) {
             flash('notice', 'Post successfully saved. Yay!');
         } else {
@@ -283,11 +274,9 @@ custom error handler and perform all the necessary actions to properly exit:
 <?php
 get('/blog/<#:id>', function($id)
 {
-    ...
     halt('database', 'connection_error');
-    ...
+    // return a 404 response if $id is not found
     halt(404);
-    ...
 });
 ```
 
