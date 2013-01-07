@@ -23,10 +23,6 @@ function config($key = null, $value = null)
     static $storage = array(
         'flash' => '_flash',
         'csrf'  => '_csrf',
-        'log_levels' => array(
-            LOG_EMERG, LOG_ALERT, LOG_CRIT, LOG_ERR,
-            LOG_WARNING, LOG_NOTICE, LOG_INFO, LOG_DEBUG,
-        ),
     );
 
     if (func_num_args() > 1) {
@@ -73,67 +69,6 @@ function call($callable, $arg = null)
     $args = func_get_args();
     $callable = array_shift($args);
     return apply($callable, $args);
-}
-
-// ## Logging
-
-/**
- * Gets or sets a log handler callback for a specific log level. Log handler
- * callbacks take the log message as their argument.
- *
- * @param int      $level    Log level
- * @param callable $callback Log handler callback
- *
- * @return mixed
- */
-function log_handle($level = null, $callback = null)
-{
-    static $callbacks = array();
-
-    if (func_num_args() > 1) {
-        $callbacks[$level] = $callback;
-    } elseif (func_num_args()) {
-        return isset($callbacks[$level]) ? $callbacks[$level] : null;
-    } else {
-        return $callbacks;
-    }
-}
-
-/**
- * Writes a string message to the error log and runs any custom log handler.
- * When using the cli-server, log messages are sent directly to the SAPI logging
- * handler.
- *
- * @param string $message Log message
- * @param int    $level   Log level; defaults to LOG_INFO
- */
-function log_write($message, $level = LOG_INFO)
-{
-    static $priorities = array(
-        LOG_EMERG   => 'EMERGENCY',
-        LOG_ALERT   => 'ALERT',
-        LOG_CRIT    => 'CRITICAL',
-        LOG_ERR     => 'ERROR',
-        LOG_WARNING => 'WARNING',
-        LOG_NOTICE  => 'NOTICE',
-        LOG_INFO    => 'INFO',
-        LOG_DEBUG   => 'DEBUG',
-    );
-
-    if (in_array($level, config('log_levels'))) {
-
-        $log = $priorities[$level] . ': ' . strval($message);
-
-        if (php_sapi_name() === 'cli-server') {
-            error_log($log, 4);
-        } else {
-            error_log($log);
-        }
-
-        if (($callback = log_handle($level)) !== null) {
-            call($callback, $message);
-        }
-    }
 }
 
 // ## Flash session storage

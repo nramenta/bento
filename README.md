@@ -1,8 +1,8 @@
 # Bento - A simple PHP micro framework
 
 Bento provides a simple yet flexible routing system, built-in CSRF prevention,
-flash session variables, a dead-simple logging system, and numerous little
-helper functions to make developing web apps suck less.
+flash session variables, and numerous little helper functions to make developing
+web apps suck less.
 
 ## Installation
 
@@ -342,40 +342,6 @@ after(function()
 });
 ```
 
-### Logging
-
-Bento provides a wrapper function around `error_log()`:
-
-```php
-<?php
-get('/some/path', function()
-{
-    ...
-    log_write('something is very wrong', LOG_ERR);
-    ...
-});
-```
-
-Register custom log handlers with `log_handle()`:
-
-```php
-<?php
-log_handle(LOG_EMERG, function($message)
-{
-    // email $message to developers complete with detailed system stats.
-});
-```
-
-Handled logs will still be sent to `error_log()`. Bento supports LOG_EMERG,
-LOG_ALERT, LOG_CRIT, LOG_ERR, LOG_WARNING, LOG_NOTICE, LOG_INFO, and LOG_DEBUG.
-
-By default all levels are logged. To log only warnings and errors in your code:
-
-```php
-<?php
-config('log_levels', array(LOG_ERR, LOG_WARNING));
-```
-
 ### Autoloading
 
 Take advantage of PHP's autoloading functionality by organizing your callbacks
@@ -386,8 +352,8 @@ as static methods in classes and register them, e.g., as follows:
 get('/blog/<id>', array('Blog', 'get_post'));
 ```
 
-The callbacks will then be loaded only when needed. The same can be done for
-error handlers, and log handlers.
+The callbacks will then be loaded only when needed. The same can also be done
+for error handlers.
 
 ## License
 
