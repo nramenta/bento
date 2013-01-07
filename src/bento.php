@@ -221,6 +221,244 @@ function flash_write()
     return true;
 }
 
+// ## HTTP, paths and URLs
+
+/**
+ * Returns HTTP status string or null for unrecognized HTTP status code.
+ *
+ * @param int $code HTTP status code
+ *
+ * @return string|null
+ */
+function http_status($code = null)
+{
+    static $codes = array(
+        100 => 'Continue', 'Switching Protocols',
+        200 => 'OK', 'Created', 'Accepted', 'Non-Authoritative Information',
+                'No Content', 'Reset Content', 'Partial Content',
+        300 => 'Multiple Choices', 'Moved Permanently', 'Moved Temporarily',
+                'See Other', 'Not Modified', 'Use Proxy',
+        400 => 'Bad Request', 'Unauthorized', 'Payment Required', 'Forbidden',
+                'Not Found', 'Method Not Allowed', 'Not Acceptable',
+                'Proxy Authentication Required', 'Request Time-out', 'Conflict',
+                'Gone', 'Length Required', 'Precondition Failed',
+                'Request Entity Too Large', 'Request-URI Too Large',
+                'Unsupported Media Type',
+        500 => 'Internal Server Error', 'Not Implemented', 'Bad Gateway',
+                'Service Unavailable', 'Gateway Time-out',
+                'HTTP Version not supported',
+    );
+
+    return isset($codes[$code]) ? $codes[$code] : null;
+}
+
+/**
+ * Tests if a route matches a given path.
+ *
+ * @param string $route    Route to match
+ * @param string $path     Request path
+ * @param array  $matches  Array of matching route segments (optional)
+ * @param bool   $redirect Flag to indicate if a redirect is needed (optional)
+ *
+ * @return bool Boolean true if matches, false otherwise
+ */
+function route_match($route, $path, &$matches = null, &$redirect = null)
+{
+    static $replace;
+    if (!isset($replace)) {
+        $replace = function($match) {
+            if ($match['rule'] === '') {
+                return '(?P<' . $match['name'] . '>[^\/]+)';
+            } elseif ($match['rule'] === '#') {
+                return '(?P<' . $match['name'] . '>\d+)';
+            } elseif ($match['rule'] === '$') {
+                return '(?P<' . $match['name'] . '>[a-zA-Z0-9-_]+)';
+            } elseif ($match['rule'] === '*') {
+                return '(?P<' . $match['name'] . '>.+)';
+            } else {
+                return '(?P<' . $match['name'] . '>' . $match['rule'] . ')';
+            }
+        };
+    }
+
+    static $pattern = '/<(?:(?P<rule>.+?):)?(?P<name>[a-z_][a-z0-9_]+)>/i';
+
+    $trailing = preg_match('/\/$/', $route);
+    $redirect = $trailing && !preg_match('/\/$/', $path);
+
+    return preg_match(
+        '#^' . preg_replace_callback($pattern, $replace, $route) .
+        ($trailing ? '?' : null) . '$#',
+        urldecode($path), $matches
+    );
+}
+
+/**
+ * Returns the request method or tests if the current request method matches the
+ * one given as argument. Request methods are *case sensitive*.
+ *
+ * @param string $method Expected request method (optional)
+ *
+ * @return mixed Either a string representing the request method or a bool
+ */
+function request_method($method = null)
+{
+    return isset($method) ?
+        $method === $_SERVER['REQUEST_METHOD'] : $_SERVER['REQUEST_METHOD'];
+}
+
+/**
+ * Returns the request path or tests if the current request path matches the
+ * route pattern given as argument.
+ *
+ * @param string $route    Route pattern (optional)
+ * @param array  $matches  Array of matching route segments (optional)
+ * @param bool   $redirect Flag to indicate if a redirect is needed (optional)
+ *
+ * @return mixed Either a string representing the request path or a bool
+ */
+function request_path($route = null, &$matches = null, &$redirect = null)
+{
+    $path = substr($path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),
+        -(strlen($path)-strlen(base_path())));
+
+    return isset($route) ?
+        route_match($route, $path, $matches, $redirect) : $path;
+}
+
+/**
+ * Returns the base path of the current request.
+ *
+ * @param string $path Path appended to the returned base path (optional)
+ *
+ * @return string
+ */
+function base_path($path = null)
+{
+    $base_path = config('_base_path');
+
+    if (isset($base_path)) return $base_path . $path;
+
+    $request_uri = $_SERVER['REQUEST_URI'];
+    $script_name = $_SERVER['SCRIPT_NAME'];
+
+    return substr($request_uri, 0, strlen(rtrim(dirname($script_name),
+        '/\\'))) . $path;
+}
+
+/**
+ * Returns the base URL of the current request.
+ *
+ * @return string
+ */
+function base_url()
+{
+    return url_for('/');
+}
+
+/**
+ * Tests if a request was made over SSL.
+ *
+ * @param bool Boolean true if yes, false otherwise
+ */
+function is_https()
+{
+    return isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) &&
+        $_SERVER['HTTPS'] != 'off';
+}
+
+/**
+ * Tests if the request was made with XMLHttpRequest.
+ *
+ * @return bool Boolean true if yes, false otherwise
+ */
+function is_ajax()
+{
+    return isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+        $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
+}
+
+/**
+ * Tests if the request is was made with PJAX.
+ *
+ * @return bool Boolean true if yes, false otherwise
+ */
+function is_pjax()
+{
+    return isset($_SERVER['HTTP_X_PJAX']);
+}
+
+/**
+ * Returns a single or all dynamic path parameters. Pass a single argument as
+ * parameter name to return its value. Pass no arguments to get all parameters
+ * as a single associative array. The second argument is used to set the default
+ * value for the parameter.
+ *
+ * @param string $name  Parameter name
+ * @param string $value Parameter default value; defaults to null
+ *
+ * @return string|null
+ */
+function params($name = null, $value = null)
+{
+    static $params = array();
+
+    if (func_num_args() > 1) {
+        if (!isset($params[$name])) {
+            $params[$name] = $value;
+        }
+        return $params[$name];
+    } elseif (func_num_args()) {
+        return isset($params[$name]) ? $params[$name] : null;
+    } else {
+        return $params;
+    }
+}
+
+/**
+ * Returns a URL for a specific path. To get the URL of the current request,
+ * pass null as the first argument. Query string array passed as the second
+ * argument overrides the current ones.
+ *
+ * @param string $path Path for the returned URL (optional)
+ * @param array  $args Query string for the returned URL (optional)
+ *
+ * @return string
+ */
+function url_for($path = null, $args = array())
+{
+    if (func_num_args() === 1) {
+        if (is_array(func_get_arg(0))) {
+            $path = null;
+            $args = func_get_arg(0);
+        }
+    }
+
+    $schema = is_https() ? 'https://' : 'http://';
+
+    $host = $_SERVER['HTTP_HOST'];
+
+    $parts = parse_url(
+        $schema . $host .
+        ($path ? base_path($path) : $_SERVER['REQUEST_URI'])
+    );
+
+    if (isset($parts['query'])) {
+        parse_str($parts['query'], $query);
+        $query = array_merge($query, $args);
+    } else {
+        $query = $args;
+    }
+
+    if ($query) {
+        $parts['query'] = http_build_query($query);
+    }
+
+    return $schema . $host . $parts['path'] .
+        (isset($parts['query']) ? '?' . $parts['query'] : null) .
+        (isset($parts['fragment']) ? '#' . $parts['fragment'] : null);
+}
+
 // ## Routing
 
 /**
@@ -399,76 +637,6 @@ function error($code = null, $callback = null)
 }
 
 /**
- * Tests if a route matches a given path.
- *
- * @param string $route    Route to match
- * @param string $path     Request path
- * @param array  $matches  Array of matching route segments (optional)
- * @param bool   $redirect Flag to indicate if a redirect is needed (optional)
- *
- * @return bool Boolean true if matches, false otherwise
- */
-function route_match($route, $path, &$matches = null, &$redirect = null)
-{
-    static $replace;
-    if (!isset($replace)) {
-        $replace = function($match) {
-            if ($match['rule'] === '') {
-                return '(?P<' . $match['name'] . '>[^\/]+)';
-            } elseif ($match['rule'] === '#') {
-                return '(?P<' . $match['name'] . '>\d+)';
-            } elseif ($match['rule'] === '$') {
-                return '(?P<' . $match['name'] . '>[a-zA-Z0-9-_]+)';
-            } elseif ($match['rule'] === '*') {
-                return '(?P<' . $match['name'] . '>.+)';
-            } else {
-                return '(?P<' . $match['name'] . '>' . $match['rule'] . ')';
-            }
-        };
-    }
-
-    static $pattern = '/<(?:(?P<rule>.+?):)?(?P<name>[a-z_][a-z0-9_]+)>/i';
-
-    $trailing = preg_match('/\/$/', $route);
-    $redirect = $trailing && !preg_match('/\/$/', $path);
-
-    return preg_match(
-        '#^' . preg_replace_callback($pattern, $replace, $route) .
-        ($trailing ? '?' : null) . '$#',
-        urldecode($path), $matches
-    );
-}
-
-/**
- * Returns HTTP status string or null for unrecognized HTTP status code.
- *
- * @param int $code HTTP status code
- *
- * @return string|null
- */
-function http_status($code = null)
-{
-    static $codes = array(
-        100 => 'Continue', 'Switching Protocols',
-        200 => 'OK', 'Created', 'Accepted', 'Non-Authoritative Information',
-                'No Content', 'Reset Content', 'Partial Content',
-        300 => 'Multiple Choices', 'Moved Permanently', 'Moved Temporarily',
-                'See Other', 'Not Modified', 'Use Proxy',
-        400 => 'Bad Request', 'Unauthorized', 'Payment Required', 'Forbidden',
-                'Not Found', 'Method Not Allowed', 'Not Acceptable',
-                'Proxy Authentication Required', 'Request Time-out', 'Conflict',
-                'Gone', 'Length Required', 'Precondition Failed',
-                'Request Entity Too Large', 'Request-URI Too Large',
-                'Unsupported Media Type',
-        500 => 'Internal Server Error', 'Not Implemented', 'Bad Gateway',
-                'Service Unavailable', 'Gateway Time-out',
-                'HTTP Version not supported',
-    );
-
-    return isset($codes[$code]) ? $codes[$code] : null;
-}
-
-/**
  * Halts the current response, sends any applicable HTTP response code header,
  * calls any custom error handler, and exits.
  *
@@ -510,173 +678,6 @@ function shutdown()
     }
 }
 
-// ## Paths and URLs
-
-/**
- * Tests if a request was made over SSL.
- *
- * @param bool Boolean true if yes, false otherwise
- */
-function is_https()
-{
-    return isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) &&
-        $_SERVER['HTTPS'] != 'off';
-}
-
-/**
- * Tests if the request was made with XMLHttpRequest.
- *
- * @return bool Boolean true if yes, false otherwise
- */
-function is_ajax()
-{
-    return isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-        $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
-}
-
-/**
- * Tests if the request is was made with PJAX.
- *
- * @return bool Boolean true if yes, false otherwise
- */
-function is_pjax()
-{
-    return isset($_SERVER['HTTP_X_PJAX']);
-}
-
-/**
- * Returns a URL for a specific path. To get the URL of the current request,
- * pass null as the first argument. Query string array passed as the second
- * argument overrides the current ones.
- *
- * @param string $path Path for the returned URL (optional)
- * @param array  $args Query string for the returned URL (optional)
- *
- * @return string
- */
-function url_for($path = null, $args = array())
-{
-    if (func_num_args() === 1) {
-        if (is_array(func_get_arg(0))) {
-            $path = null;
-            $args = func_get_arg(0);
-        }
-    }
-
-    $schema = is_https() ? 'https://' : 'http://';
-
-    $host = $_SERVER['HTTP_HOST'];
-
-    $parts = parse_url(
-        $schema . $host .
-        ($path ? base_path($path) : $_SERVER['REQUEST_URI'])
-    );
-
-    if (isset($parts['query'])) {
-        parse_str($parts['query'], $query);
-        $query = array_merge($query, $args);
-    } else {
-        $query = $args;
-    }
-
-    if ($query) {
-        $parts['query'] = http_build_query($query);
-    }
-
-    return $schema . $host . $parts['path'] .
-        (isset($parts['query']) ? '?' . $parts['query'] : null) .
-        (isset($parts['fragment']) ? '#' . $parts['fragment'] : null);
-}
-
-/**
- * Returns the base path of the current request.
- *
- * @param string $path Path appended to the returned base path (optional)
- *
- * @return string
- */
-function base_path($path = null)
-{
-    $base_path = config('_base_path');
-
-    if (isset($base_path)) return $base_path . $path;
-
-    $request_uri = $_SERVER['REQUEST_URI'];
-    $script_name = $_SERVER['SCRIPT_NAME'];
-
-    return substr($request_uri, 0, strlen(rtrim(dirname($script_name),
-        '/\\'))) . $path;
-}
-
-/**
- * Returns the base URL of the current request.
- *
- * @return string
- */
-function base_url()
-{
-    return url_for('/');
-}
-
-/**
- * Returns the request method or tests if the current request method matches the
- * one given as argument. Request methods are *case sensitive*.
- *
- * @param string $method Expected request method (optional)
- *
- * @return mixed Either a string representing the request method or a bool
- */
-function request_method($method = null)
-{
-    return isset($method) ?
-        $method === $_SERVER['REQUEST_METHOD'] : $_SERVER['REQUEST_METHOD'];
-}
-
-/**
- * Returns the request path or tests if the current request path matches the
- * route pattern given as argument.
- *
- * @param string $route    Route pattern (optional)
- * @param array  $matches  Array of matching route segments (optional)
- * @param bool   $redirect Flag to indicate if a redirect is needed (optional)
- *
- * @return mixed Either a string representing the request path or a bool
- */
-function request_path($route = null, &$matches = null, &$redirect = null)
-{
-    $path = substr($path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),
-        -(strlen($path)-strlen(base_path())));
-
-    return isset($route) ?
-        route_match($route, $path, $matches, $redirect) : $path;
-}
-
-/**
- * Returns a single or all dynamic path parameters. Pass a single argument as
- * parameter name to return its value. Pass no arguments to get all parameters
- * as a single associative array. The second argument is used to set the default
- * value for the parameter.
- *
- * @param string $name  Parameter name
- * @param string $value Parameter default value; defaults to null
- *
- * @return string|null
- */
-function params($name = null, $value = null)
-{
-    static $params = array();
-
-    if (func_num_args() > 1) {
-        if (!isset($params[$name])) {
-            $params[$name] = $value;
-        }
-        return $params[$name];
-    } elseif (func_num_args()) {
-        return isset($params[$name]) ? $params[$name] : null;
-    } else {
-        return $params;
-    }
-}
 
 // ## Redirection
 

@@ -248,13 +248,13 @@ There are a number of request, path, URL and redirection helper functions:
 - `request_method()`: Gets or tests the current request method.
 - `request_path()`: Gets or tests the current request path.
 - `route_match()`: Tests if a route matches a request path.
-- `url_for()`: Returns the URL for a given path.
 - `base_path()`: Returns the base path.
 - `base_url()`: Returns the base URL.
 - `is_https()`: Tests if the request was made over SSL.
 - `is_ajax()`: Tests if the request was made with XMLHttpRequest.
 - `is_pjax()`: Tests if the request was made with PJAX.
 - `params()`: Returns a dynamic path variable.
+- `url_for()`: Returns the URL for a given path.
 - `redirect()`: Redirects to a given URL.
 - `redirect_to()`: Redirects to the URL of a given path.
 
