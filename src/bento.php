@@ -21,8 +21,8 @@
 function config($key = null, $value = null)
 {
     static $storage = array(
-        'flash' => '_flash',
-        'csrf'  => '_csrf',
+        '_flash' => '_flash',
+        '_csrf'  => '_csrf',
     );
 
     if (func_num_args() > 1) {
@@ -90,7 +90,7 @@ function flash($key = null, $value = null, $keep = true)
 
     if (!isset($_SESSION)) session_start();
 
-    $flash = config('flash');
+    $flash = config('_flash');
 
     if (func_num_args() > 1) {
         $old = isset($_SESSION[$flash][$key]) ? $_SESSION[$flash][$key] : null;
@@ -127,7 +127,7 @@ function flash_now($key = null, $value = null)
 {
     if (!isset($_SESSION)) session_start();
 
-    $flash = config('flash');
+    $flash = config('_flash');
 
     if (func_num_args() > 1) {
         return flash($key, $value, false);
@@ -208,7 +208,7 @@ function flash_write()
 {
     if (!isset($_SESSION)) return false;
 
-    $flash = config('flash');
+    $flash = config('_flash');
 
     $data = flash();
 
@@ -597,7 +597,7 @@ function url_for($path = null, $args = array())
  */
 function base_path($path = null)
 {
-    $base_path = config('base_path');
+    $base_path = config('_base_path');
 
     if (isset($base_path)) return $base_path . $path;
 
@@ -725,7 +725,7 @@ function csrf_token($renew = false)
 {
     if (!isset($_SESSION)) session_start();
 
-    $csrf = config('csrf');
+    $csrf = config('_csrf');
 
     if (!isset($_SESSION[$csrf]) || $renew) {
         $_SESSION[$csrf] = md5(uniqid(mt_rand(), true));
@@ -744,7 +744,7 @@ function csrf_token($renew = false)
  */
 function csrf_field($name = null)
 {
-    $csrf = $name ?: config('csrf');
+    $csrf = $name ?: config('_csrf');
 
     return '<input type="hidden" name="' . $csrf . '" value="' . csrf_token() .
         '">';
@@ -762,7 +762,7 @@ function csrf_field($name = null)
  */
 function prevent_csrf($name = null)
 {
-    $csrf = $name ?: config('csrf');
+    $csrf = $name ?: config('_csrf');
 
     $token = csrf_token();
 
@@ -934,7 +934,7 @@ function dispatch($method, $path)
 function run($file)
 {
     if (php_sapi_name() === 'cli-server') {
-        config('base_path', '');
+        config('_base_path', '');
         if ($file != $_SERVER['SCRIPT_FILENAME']) {
             return false;
         }
