@@ -465,15 +465,20 @@ function before($callback = null)
 }
 
 /**
- * Registers a callback to the 'route_after' event.
+ * Registers a callback to the 'after' event.
  *
- * @param callable $callback 'route_after' event handler callback
+ * @param callable $callback 'after' event handler callback
  *
  * @return mixed
  */
-function route_after($callback)
+function after($callback = null)
 {
-    return event_register('route_after', $callback);
+    static $after;
+    if (func_num_args()) {
+        $after = $callback;
+    } else {
+        return $after;
+    }
 }
 
 /**
@@ -961,7 +966,7 @@ function no_content()
 
 /**
  * Dispatches incoming request. This function may trigger the 'before',
- * and 'route_after' events.
+ * and 'after' events.
  *
  * @param string $method Request method
  * @param string $path   Request path
@@ -1024,7 +1029,7 @@ function dispatch($method, $path)
 
             ($before = before()) && apply($before, $params);
             apply($callback, $params);
-            event_trigger('route_after', $params);
+            ($after = after()) && apply($after, $params);
             return;
         }
     }

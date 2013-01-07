@@ -354,11 +354,11 @@ Built-in events:
 - `redirect`: Triggered whenever `redirect()` is called.
 - `before`: Triggered just before a route handler is about to be called;
   this implies that a route is matched.
-- `route_after`: Triggered just after a route handler is called. If a route
+- `after`: Triggered just after a route handler is called. If a route
   handler exits prematurely, e.g., by invoking `halt()`, this event is never
   triggered.
 
-The functions `before()` and `route_after()` are provided as convenience.
+The functions `before()` and `after()` are provided as convenience.
 
 ### Logging
 
