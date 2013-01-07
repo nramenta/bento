@@ -164,8 +164,8 @@ consistent with most popular web servers.
 ### Flash sessions
 
 Flash sessions are key-value session variables that are available for use only
-in the very next request and no further. Pass two arguments as key and value to
-set a flash session; pass a single argument as key to get a flash session:
+once in a subsequent request and no further. Pass two arguments as key and value
+to set a flash session; pass a single argument as key to get a flash session:
 
 ```php
 <?php
@@ -186,8 +186,9 @@ get('/step-2', function()
 
 In the above example, when a request to `/step-2` is made right after a request
 to `/step-1`, the flash variable `words` is available and set. If the user then
-visits any other URL after that, or in between those requests, then the flash
-variable `words` will yield null.
+visits any other URL after that, or visits a URL with a route handler that uses
+the same flash variable in between those requests, then that flash variable will
+yield `null`; it has been used and thus ceased to exist.
 
 ### Built-in CSRF prevention
 
