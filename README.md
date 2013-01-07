@@ -275,9 +275,8 @@ There are a number of request, path, URL and redirection helper functions:
 
 ### Error handling and halt
 
-Halting a request will stop execution immediately, call any custom halt handler,
-and perform all the necessary actions to properly exit. Trigger an error by
-calling `halt()`:
+Halting a request by calling `halt()` will stop execution immediately, call any
+custom error handler and perform all the necessary actions to properly exit:
 
 ```php
 <?php
@@ -291,16 +290,16 @@ get('/blog/<#:id>', function($id)
 });
 ```
 
-Register custom halt handlers with `route_halt()`:
+Register custom error handlers with `error()`:
 
 ```php
 <?php
-route_halt(404, function($message = null)
+error(404, function($message = null)
 {
     echo '<h1>404 - Page Not Found</h1>';
 });
 
-route_halt(400, function($message = null)
+error(400, function($message = null)
 {
     echo '<h1>400 - Bad Request</h1>';
     if ($message == 'csrf') {
@@ -308,7 +307,7 @@ route_halt(400, function($message = null)
     }
 });
 
-route_halt('database', function($message = null)
+error('database', function($message = null)
 {
     // handle custom database error based on $message
 });
@@ -316,7 +315,7 @@ route_halt('database', function($message = null)
 
 Passing `halt()` an HTTP error code as the first argument will automatically
 send the corresponding HTTP response code header. You can optionally pass an
-extra argument to `halt()` which will be passed on to the halt handler.
+extra argument to `halt()` which will be passed on to the error handler.
 
 Bento will, by default, handle 400, 404, 405, 500, and 503 HTTP errors.
 
@@ -405,7 +404,7 @@ get('/blog/<id>', array('Blog', 'get_post'));
 ```
 
 The callbacks will then be loaded only when needed. The same can be done for
-halt handlers, event handlers and log handlers.
+error handlers, event handlers and log handlers.
 
 ## License
 

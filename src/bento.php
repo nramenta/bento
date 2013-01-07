@@ -482,8 +482,8 @@ function after($callback = null)
 }
 
 /**
- * Gets or sets a halt handler for a specific code. Callback functions can take
- * a message parameter which can be anything from simple strings to elaborate
+ * Gets or sets an error handler for a specific code. Callback functions can
+ * take a message parameter which can be anything from simple strings to complex
  * structures.
  *
  * @param mixed    $code     Halt code, one of HTTP 4xx or 5xx or a string
@@ -491,7 +491,7 @@ function after($callback = null)
  *
  * @return mixed
  */
-function route_halt($code = null, $callback = null)
+function error($code = null, $callback = null)
 {
     static $callbacks = array();
 
@@ -576,11 +576,11 @@ function http_status($code = null)
 
 /**
  * Halts the current response, sends any applicable HTTP response code header,
- * calls any custom halt handler, and exits. This function triggers the 'halt'
+ * calls any custom error handler, and exits. This function triggers the 'halt'
  * event.
  *
  * @param mixed $code    Halt code, one of HTTP 4xx or 5xx or a string
- * @param mixed $message Message to be sent to the halt handler callback
+ * @param mixed $message Message to be sent to the error handler callback
  */
 function halt($code = null, $message = null)
 {
@@ -592,7 +592,7 @@ function halt($code = null, $message = null)
         header("HTTP/1.1 $code $status", true, $code);
     }
 
-    if (($callback = route_halt($code)) !== null) {
+    if (($callback = error($code)) !== null) {
         call($callback, $message);
     }
 
@@ -1053,8 +1053,8 @@ function run($file)
     }
 
     foreach (array(400, 404, 405, 500, 503) as $code) {
-        if (route_halt($code) === null) {
-            route_halt($code, function($message = null) use ($code) {
+        if (error($code) === null) {
+            error($code, function($message = null) use ($code) {
                 header('Content-Type: text/plain');
                 echo $code, ' ', http_status($code);
                 if (isset($message)) echo "\n$message";
