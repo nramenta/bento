@@ -448,15 +448,20 @@ function any($route, $callback)
 }
 
 /**
- * Registers a callback to the 'route_before' event.
+ * Registers a callback to the 'before' event.
  *
- * @param callable $callback 'route_before' event handler callback
+ * @param callable $callback 'before' event handler callback
  *
  * @return mixed
  */
-function route_before($callback)
+function before($callback = null)
 {
-    return event_register('route_before', $callback);
+    static $before;
+    if (func_num_args()) {
+        $before = $callback;
+    } else {
+        return $before;
+    }
 }
 
 /**
@@ -955,7 +960,7 @@ function no_content()
 // ## Dispatcher
 
 /**
- * Dispatches incoming request. This function may trigger the 'route_before',
+ * Dispatches incoming request. This function may trigger the 'before',
  * and 'route_after' events.
  *
  * @param string $method Request method
@@ -1017,7 +1022,7 @@ function dispatch($method, $path)
                 }
             }
 
-            event_trigger('route_before', $params);
+            ($before = before()) && apply($before, $params);
             apply($callback, $params);
             event_trigger('route_after', $params);
             return;
