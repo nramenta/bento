@@ -1,8 +1,8 @@
 # Bento - A simple PHP micro framework
 
 Bento provides a simple yet flexible routing system, built-in CSRF prevention,
-flash session variables, an events system, a dead-simple logging system, and
-numerous little helper functions to make developing web apps suck less.
+flash session variables, a dead-simple logging system, and numerous little
+helper functions to make developing web apps suck less.
 
 ## Installation
 
@@ -319,45 +319,28 @@ extra argument to `halt()` which will be passed on to the error handler.
 
 Bento will, by default, handle 400, 404, 405, 500, and 503 HTTP errors.
 
-### Events
+### Routing events
 
-Events are a great way to increase modularity by separating concerns. Trigger an
-event by calling`event_trigger()`:
-
-```php
-<?php
-get('/some/path', function()
-{
-    ...
-    event_trigger('my_custom_event', 'This will be passed on to the callback');
-    ...
-});
-```
-
-Register a callback to a named event with `event_register()`:
-
-```php
-<?php
-event_register('my_custom_event', function($message)
-{
-    // do something when 'my_custom_event' triggers ...
-});
-```
-
-You can optionally pass extra arguments to `event_trigger()` which will be
-passed on to the event handlers.
-
-Built-in events:
-
-- `halt`: Triggered whenever `halt()` is called.
-- `redirect`: Triggered whenever `redirect()` is called.
 - `before`: Triggered just before a route handler is about to be called;
   this implies that a route is matched.
 - `after`: Triggered just after a route handler is called. If a route
   handler exits prematurely, e.g., by invoking `halt()`, this event is never
   triggered.
 
-The functions `before()` and `after()` are provided as convenience.
+The functions `before()` and `after()` are provided as convenience:
+
+```php
+<?php
+before(function()
+{
+    echo 'Printed for every matched route prior to the route handler.';
+});
+
+after(function()
+{
+    echo 'As will this, but afer the route handler.';
+});
+```
 
 ### Logging
 
@@ -404,7 +387,7 @@ get('/blog/<id>', array('Blog', 'get_post'));
 ```
 
 The callbacks will then be loaded only when needed. The same can be done for
-error handlers, event handlers and log handlers.
+error handlers, and log handlers.
 
 ## License
 

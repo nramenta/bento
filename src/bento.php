@@ -136,47 +136,6 @@ function log_write($message, $level = LOG_INFO)
     }
 }
 
-// ## Events
-
-/**
- * Registers an event handler callback. Callbacks can take extra arguments
- * passed from `event_trigger()`.
- *
- * @param string   $name     Event name
- * @param callable $callback Event handler callback
- *
- * @return mixed
- */
-function event_register($name = null, $callback = null)
-{
-    static $callbacks = array();
-
-    if (func_num_args() > 1) {
-        $callbacks[$name][] = $callback;
-    } elseif (func_num_args()) {
-        return isset($callbacks[$name]) ? $callbacks[$name] : array();
-    } else {
-        return $callbacks;
-    }
-}
-
-/**
- * Triggers a named event. Extra arguments are passed on to the event handler
- * callbacks.
- *
- * @param string $name    Event name
- * @param mixed  $arg     Argument for the event handlers
- * @param mixed  $arg,... Unlimited optional arguments for the event handlers
- */
-function event_trigger($name, $arg = null)
-{
-    $args = func_get_args();
-    $name = array_shift($args);
-    foreach (event_register($name) as $callback) {
-        apply($callback, $args);
-    }
-}
-
 // ## Flash session storage
 
 /**
@@ -576,16 +535,13 @@ function http_status($code = null)
 
 /**
  * Halts the current response, sends any applicable HTTP response code header,
- * calls any custom error handler, and exits. This function triggers the 'halt'
- * event.
+ * calls any custom error handler, and exits.
  *
  * @param mixed $code    Halt code, one of HTTP 4xx or 5xx or a string
  * @param mixed $message Message to be sent to the error handler callback
  */
 function halt($code = null, $message = null)
 {
-    event_trigger('halt', $code, $message);
-
     $status = http_status($code);
 
     if (isset($status)) {
@@ -791,7 +747,6 @@ function params($name = null, $value = null)
 
 /**
  * Redirects to a given URL with configurable HTTP response code and time delay.
- * This function triggers the 'redirect' event.
  *
  * @param string $url   Redirect URL
  * @param int    $code  HTTP redirect code; defaults to 302
@@ -800,8 +755,6 @@ function params($name = null, $value = null)
 function redirect($url = null, $code = 302, $delay = 0)
 {
     $url = isset($url) ? $url : url_for();
-
-    event_trigger('redirect', $url, $code, $delay);
 
     if ($delay) {
         header('Refresh: '. $delay .'; url=' . $url, true);
