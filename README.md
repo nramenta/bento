@@ -39,7 +39,16 @@ Minimum nginx configuration:
 
 ```
 location / {
-    try_file $uri $uri/ /index.php;
+    try_file $uri $uri/ /index.php?$query_string;
+}
+```
+
+If you want to install your application in a subdirectory, for example `myapp`,
+do the following:
+
+```
+location /myapp {
+    try_file $uri $uri/ /myapp/index.php?$query_string;
 }
 ```
 
