@@ -729,7 +729,13 @@ function csrf_token($renew = false)
     $csrf = config('_csrf');
 
     if (!isset($_SESSION[$csrf]) || $renew) {
-        $_SESSION[$csrf] = md5(uniqid(mt_rand(), true));
+        if (is_callable('openssl_random_pseudo_bytes')) {
+            $_SESSION[$csrf] = substr(
+                base64_encode(openssl_random_pseudo_bytes(40)), 0, 40
+            );
+        } else {
+            $_SESSION[$csrf] = sha1(uniqid(mt_rand(), true));
+        }
     }
 
     return $_SESSION[$csrf];
