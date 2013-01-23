@@ -224,6 +224,31 @@ Any CSRF-related errors will result in a "400 Bad Request" invoked automatically
 by calling `halt(400, 'csrf')`. Use SSL lest your CSRF tokens be subject to
 [man in the middle attacks][MITM].
 
+Even though it is strongly advisable to keep your GET requests idempotent, you
+can also protect GET requests from CSRFs, for example, if you have a delete link
+in your application:
+
+```php
+<?php
+get('/posts/<#:id>', function($id)
+{
+    echo '<a href="'.url_for("/delete/$id?" . csrf_qs()).'">delete post</a>';
+});
+```
+
+The value return from `csrf_qs` is a URL-encoded query string. In your GET route
+handler:
+
+```php
+<?php
+get('/delete/<#:id>', function($id)
+{
+    // auth() here is a custom user-defined authorization function
+    auth() and prevent_csrf();
+    // continue ...
+});
+```
+
 ### Post-Redirect-Get pattern
 
 [Post/Redirect/Get][PRG] is a web development design pattern that prevents some

@@ -788,6 +788,22 @@ function csrf_field($name = null, $renew = false)
 }
 
 /**
+ * Returns a URL-encoded query string containing a CSRF token. The name of the
+ * parameter is defined by the '_csrf' config key.
+ *
+ * @param string $name  Hidden field input name (optional)
+ * @param bool   $renew Flag to renew the CSRF token; defaults to false
+ *
+ * @return string
+ */
+function csrf_qs($name = null, $renew = false)
+{
+    $csrf = $name ?: config('_csrf');
+
+    return urlencode($csrf) . '=' . urlencode(csrf_token($renew));
+}
+
+/**
  * Prevents CSRFs on POST and GET requests by matching the server's CSRF token
  * with the one sent in with the request. The name of the POST or GET input to
  * match is defined by the 'csrf' config key. This function will call `halt()`
