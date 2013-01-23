@@ -753,8 +753,8 @@ function csrf_field($name = null)
 {
     $csrf = $name ?: config('_csrf');
 
-    return '<input type="hidden" name="' . $csrf . '" value="' . csrf_token() .
-        '">';
+    return '<input type="hidden" name="' . e($csrf) . '" ' .
+        'value="' . e(csrf_token()) . '">';
 }
 
 /**
