@@ -130,6 +130,19 @@ function flash_redirect($vars, $url = null, $code = 302, $delay = 0)
 }
 
 /**
+ * Sets multiple flash values and redirects to the URL of a given path.
+ *
+ * @param array  $vars  Flash variables
+ * @param string $url   Redirect URL; defaults to current request URL
+ * @param int    $code  HTTP redirect code; defaults to 302
+ * @param int    $delay Refresh header value in seconds (optional)
+ */
+function flash_redirect_to($vars, $path, $code = 302, $delay = 0)
+{
+    flash_redirect($vars, url_for($path), $code, $delay);
+}
+
+/**
  * Gets or sets a flash value only for the current request. Pass two arguments
  * as key and value to set a flash value. Pass a single argument as key to
  * return its value.
