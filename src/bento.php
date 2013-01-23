@@ -416,9 +416,9 @@ function params($name = null, $value = null)
 }
 
 /**
- * Returns a URL for a specific path. To get the URL of the current request,
- * pass null as the first argument. Query string array passed as the second
- * argument overrides the current ones.
+ * Returns the fully-qualified URL for a specific path. To get the URL of the
+ * current request, pass null as the first argument. Query string array passed
+ * as the second argument overrides existing ones.
  *
  * @param string $path Path for the returned URL (optional)
  * @param array  $args Query string for the returned URL (optional)

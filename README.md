@@ -263,7 +263,7 @@ There are a number of request, path, URL and redirection helper functions:
 - `is_ajax()`: Tests if the request was made with XMLHttpRequest.
 - `is_pjax()`: Tests if the request was made with PJAX.
 - `params()`: Returns a dynamic path variable.
-- `url_for()`: Returns the URL for a given path.
+- `url_for()`: Returns the fully-qualified URL for a specific path.
 - `redirect()`: Redirects to a given URL.
 - `redirect_to()`: Redirects to the URL of a given path.
 
