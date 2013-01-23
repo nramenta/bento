@@ -772,7 +772,7 @@ function csrf_token($renew = false)
 
 /**
  * Returns an HTML hidden input field containing a CSRF token. The name of the
- * hidden input field is defined by the 'csrf' config key.
+ * hidden input field is defined by the '_csrf' config key.
  *
  * @param string $name  Hidden field input name (optional)
  * @param bool   $renew Flag to renew the CSRF token; defaults to false
@@ -806,7 +806,7 @@ function csrf_qs($name = null, $renew = false)
 /**
  * Prevents CSRFs on POST and GET requests by matching the server's CSRF token
  * with the one sent in with the request. The name of the POST or GET input to
- * match is defined by the 'csrf' config key. This function will call `halt()`
+ * match is defined by the '_csrf' config key. This function will call `halt()`
  * if a CSRF error is detected and therefore would not return.
  *
  * @param string $name POST or GET variable to match (optional)
