@@ -745,16 +745,17 @@ function csrf_token($renew = false)
  * Returns an HTML hidden input field containing a CSRF token. The name of the
  * hidden input field is defined by the 'csrf' config key.
  *
- * @param string $name Hidden field input name (optional)
+ * @param string $name  Hidden field input name (optional)
+ * @param bool   $renew Flag to renew the CSRF token; defaults to false
  *
  * @return string
  */
-function csrf_field($name = null)
+function csrf_field($name = null, $renew = false)
 {
     $csrf = $name ?: config('_csrf');
 
     return '<input type="hidden" name="' . e($csrf) . '" ' .
-        'value="' . e(csrf_token()) . '">';
+        'value="' . e(csrf_token($renew)) . '">';
 }
 
 /**
