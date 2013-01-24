@@ -124,7 +124,7 @@ function flash($key = null, $value = null, $keep = true)
 function flash_redirect($vars, $url = null, $code = 302, $delay = 0)
 {
     foreach ($vars as $key => $value) {
-        flash($key, $value);
+        $delay ? flash_now($key, $value) : flash($key, $value);
     }
     return redirect($url, $code, $delay);
 }
