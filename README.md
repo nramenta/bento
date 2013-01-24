@@ -2,7 +2,7 @@
 
 Bento provides a simple yet flexible routing system, built-in CSRF prevention,
 flash session variables, and numerous little helper functions to make developing
-web apps suck less.
+web apps enjoyable.
 
 ## Installation
 
@@ -19,7 +19,7 @@ composer.json configuration is:
 }
 ```
 
-PHP 5.3 or newer is required.
+PHP 5.3 or newer is required. PHP 5.4 or newer is most definitely recommended.
 
 ### Apache
 
@@ -170,6 +170,29 @@ get('/about', function()
 A request to `/about/` will result in a "404 Not Found" error. This behavior is
 consistent with most popular web servers.
 
+### Routing events
+
+- `before`: Triggered just before a route handler is about to be called;
+  this implies that a route is matched.
+- `after`: Triggered just after a route handler is called. If a route
+  handler exits prematurely, e.g., by invoking `halt()`, this event is never
+  triggered.
+
+The functions `before()` and `after()` are provided as convenience:
+
+```php
+<?php
+before(function()
+{
+    echo 'Printed for every matched route prior to the route handler.';
+});
+
+after(function()
+{
+    echo 'As will this, but afer the route handler.';
+});
+```
+
 ### Flash sessions
 
 Flash sessions are key-value session variables that are available for use only
@@ -194,6 +217,16 @@ to `/step-1`, the flash variable `words` is available and set. If the user then
 visits any other URL after that, or visits a URL with a route handler that uses
 the same flash variable in between those requests, then that flash variable will
 yield `null`; it has been used and thus ceased to exist.
+
+There are a number flash-related helper functions:
+
+- `flash()`: Gets or sets a flash value.
+- `flash_now()`: Gets or sets a flash value only for the current request.
+- `flash_keep()`: Keeps a specific or all flash values on to the next request.
+- `flash_discard()`: Discards a specific or all flash values.
+- `flash_remove()`: Removes a specific or all flash values immediately.
+- `flash_redirect()`: Sets multiple flash values, redirects to a given URL.
+- `flash_redirect_to()`: Sets multiple flash values, redirects to a given path.
 
 ### Built-in CSRF prevention
 
@@ -342,29 +375,6 @@ send the corresponding HTTP response code header. You can optionally pass an
 extra argument to `halt()` which will be passed on to the error handler.
 
 Bento will, by default, handle 400, 404, 405, 500, and 503 HTTP errors.
-
-### Routing events
-
-- `before`: Triggered just before a route handler is about to be called;
-  this implies that a route is matched.
-- `after`: Triggered just after a route handler is called. If a route
-  handler exits prematurely, e.g., by invoking `halt()`, this event is never
-  triggered.
-
-The functions `before()` and `after()` are provided as convenience:
-
-```php
-<?php
-before(function()
-{
-    echo 'Printed for every matched route prior to the route handler.';
-});
-
-after(function()
-{
-    echo 'As will this, but afer the route handler.';
-});
-```
 
 ### Autoloading
 
