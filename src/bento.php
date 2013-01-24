@@ -850,6 +850,19 @@ function e($string, $force = false)
 }
 
 /**
+ * Prints an HTML-escaped string.
+ *
+ * @param string $string Original string
+ * @param bool   $force  Force-encode existing HTML entities; defaults to false
+ *
+ * @return string
+ */
+function p($string, $force = false)
+{
+    echo htmlspecialchars(strval($string), ENT_QUOTES, 'UTF-8', $force);
+}
+
+/**
  * Returns a rendered PHP template as a string. Throws a RuntimeException on
  * invalid files.
  *
