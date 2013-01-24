@@ -763,7 +763,9 @@ function csrf_token($renew = false)
                 base64_encode(openssl_random_pseudo_bytes(40)), 0, 40
             );
         } else {
-            $_SESSION[$csrf] = sha1(uniqid(mt_rand(), true));
+            $_SESSION[$csrf] = substr(
+                base64_encode(sha1(uniqid(mt_rand(), true))), 0, 40
+            );
         }
     }
 
