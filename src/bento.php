@@ -126,7 +126,7 @@ function flash_redirect($vars, $url = null, $code = 302, $delay = 0)
     foreach ($vars as $key => $value) {
         flash($key, $value);
     }
-    redirect($url, $code, $delay);
+    return redirect($url, $code, $delay);
 }
 
 /**
@@ -139,7 +139,7 @@ function flash_redirect($vars, $url = null, $code = 302, $delay = 0)
  */
 function flash_redirect_to($vars, $path, $code = 302, $delay = 0)
 {
-    flash_redirect($vars, url_for($path), $code, $delay);
+    return flash_redirect($vars, url_for($path), $code, $delay);
 }
 
 /**
@@ -725,9 +725,9 @@ function redirect($url = null, $code = 302, $delay = 0)
         header('Refresh: '. $delay .'; url=' . $url, true);
     } else {
         header('Location: ' . $url, true, $code);
+        halt($code);
     }
-
-    halt($code);
+    return true;
 }
 
 /**
@@ -739,7 +739,7 @@ function redirect($url = null, $code = 302, $delay = 0)
  */
 function redirect_to($path, $code = 302, $delay = 0)
 {
-    redirect(url_for($path), $code, $delay);
+    return redirect(url_for($path), $code, $delay);
 }
 
 // ## CSRF protection
