@@ -19,7 +19,7 @@ composer.json configuration is:
 }
 ```
 
-PHP 5.3 or newer is required. PHP 5.4 or newer is most definitely recommended.
+PHP 5.3 or newer is required. PHP 5.4 or newer is strongly recommended.
 
 ### Apache
 
@@ -233,6 +233,15 @@ There are a number flash-related helper functions:
 - `flash_redirect()`: Sets multiple flash values, redirects to a given URL.
 - `flash_redirect_to()`: Sets multiple flash values, redirects to a given path.
 
+The configuration key `_flash` defines the name of the session variable holding
+the flash variables. It defaults to `_flash`. To change it, put the following
+somewhere at the top of your controller file:
+
+```php
+<?php
+config('_flash', 'custom_flash_key');
+```
+
 ### Built-in CSRF prevention
 
 Effortlessly protect your forms against [cross site request forgeries][CSRF]:
@@ -285,6 +294,16 @@ get('/delete/<#:id>', function($id)
     auth() and prevent_csrf();
     // continue ...
 });
+```
+
+The configuration key `_csrf` defines the name of the POST or GET variable used
+to compare tokens as well as the name of the session variable holding the CSRF
+token. It defaults to `_csrf`. To change it, put the following somewhere at the
+top of your controller file:
+
+```php
+<?php
+config('_csrf', 'custom_csrf_key');
 ```
 
 ### Post-Redirect-Get pattern
