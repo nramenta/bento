@@ -62,6 +62,11 @@ from your terminal:
 Adjust the host and port as necessary. Replace all instances of index.php above
 with your front controller file.
 
+## Example Application
+
+There is a simple blog application found in `examples/blog` that shows off all
+the major features and usage of Bento. Refer to its `README.md` for more info.
+
 ## Usage
 
 The canonical "Hello, World!" example:

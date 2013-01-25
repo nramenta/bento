@@ -1,0 +1,78 @@
+body {
+  font-family: "Arial", sans-serif;
+  font-size: 13px;
+  color: #333333;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #CCCCCC;
+}
+
+input[type="text"],
+input[type="password"] {
+  font-family: "Arial", sans-serif;
+  font-size: 15px;
+}
+
+textarea {
+  font-family: "Arial", sans-serif;
+  font-size: 15px;
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.container {
+  max-width: 50%;
+  margin: 0 auto;
+}
+
+.post {
+  border-bottom: 1px solid #CCCCCC;
+}
+
+.post h1 {
+  margin: 0.25em 0 0;
+}
+
+.post h2 {
+  margin-bottom: 0.25em 0 0;
+}
+
+.post h2 a {
+  color: inherit;
+}
+
+.post .date {
+  font-style: italic;
+  font-size: smaller;
+  color: #999999;
+}
+
+th.align-top {
+  vertical-align: top;
+}
+
+th.align-top label {
+  position: relative;
+  top: 0.5em;
+}
+
+p.error {
+  color: red;
+}
+
+p.notice {
+  font-weight: bold;
+  font-style: italic;
+  color: green;
+}
+
+p.hint {
+  color: #666666;
+}
+
+p.hint em {
+  font-weight: bold;
+}
+
