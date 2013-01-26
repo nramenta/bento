@@ -2,14 +2,14 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title><?php echo e(config('blog_title')) ?></title>
+  <title><?php p(config('blog_title')) ?></title>
   <link rel="stylesheet" href="<?php echo url_for('/style.css') ?>">
 </head>
 <body>
 <div class="container">
 
   <?php if (isset($notice)): ?>
-  <p class="notice"><?php echo e($notice) ?></p>
+  <p class="notice"><?php p($notice) ?></p>
   <hr>
   <?php endif ?>
 
@@ -26,14 +26,14 @@
   <hr>
 
   <?php if (isset($notice)): ?>
-  <p class="notice"><?php echo e($notice) ?></p>
+  <p class="notice"><?php p($notice) ?></p>
   <?php endif ?>
 
   <?php if (isset($alert)): ?>
-  <p class="error"><?php echo e($alert) ?></p>
+  <p class="error"><?php p($alert) ?></p>
   <?php endif ?>
 
-  <h1><?php echo e(config('blog_title')) ?></h1>
+  <h1><?php p(config('blog_title')) ?></h1>
 
   <?php if (empty($posts)): ?>
   <p>There is nothing here yet. <a href="<?php echo url_for('/login') ?>">Login</a> to create, edit, and delete posts.</p>
@@ -42,8 +42,8 @@
 
   <?php foreach ($posts as $post): ?>
   <div class="post">
-    <h2><a href="<?php echo url_for('/posts/' . e($post['id'])) ?>"><?php echo e($post['title']) ?></a></h2>
-    <p class="date">Posted on <?php echo e(date('Y-m-d H:i', $post['tstamp'])) ?></p>
+    <h2><a href="<?php echo url_for('/posts/' . e($post['id'])) ?>"><?php p($post['title']) ?></a></h2>
+    <p class="date">Posted on <?php p(date('Y-m-d H:i', $post['tstamp'])) ?></p>
     <?php echo htmlize($post['body']) ?>
     <p>
       <?php if (auth()): ?>

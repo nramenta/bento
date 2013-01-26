@@ -2,13 +2,13 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Login | <?php echo e(config('blog_title')) ?></title>
+  <title>Login | <?php p(config('blog_title')) ?></title>
   <link rel="stylesheet" href="<?php echo url_for('/style.css') ?>">
 </head>
 <body>
 <div class="container">
 
-  <h1><?php echo e(config('blog_title')) ?></h1>
+  <h1><?php p(config('blog_title')) ?></h1>
 
   <hr>
 
@@ -24,7 +24,7 @@
     <table>
       <tr>
         <th><label for="username">Username</label></th>
-        <td><input type="text" id="username" name="username" value="<?php echo e($inputs['username']) ?>"></td>
+        <td><input type="text" id="username" name="username" value="<?php p($inputs['username']) ?>"></td>
       </tr>
       <tr>
         <th><label for="password">Password</label></th>
@@ -38,11 +38,11 @@
   </form>
 
   <h4>hint:</h4>
-  <p class="hint">Username: <em><?php echo e(config('username')) ?></em></p>
-  <p class="hint">Password: <em><?php echo e(config('password')) ?></em></p>
+  <p class="hint">Username: <em><?php p(config('username')) ?></em></p>
+  <p class="hint">Password: <em><?php p(config('password')) ?></em></p>
 
   <hr>
-  <p><?php echo e(config('footer')) ?></p>
+  <p><?php p(config('footer')) ?></p>
 
 </div>
 </body>

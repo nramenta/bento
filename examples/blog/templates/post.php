@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title><?php echo e($post['title']) ?> | <?php echo e(config('blog_title')) ?></title>
+  <title><?php p($post['title']) ?> | <?php p(config('blog_title')) ?></title>
   <link rel="stylesheet" href="<?php echo url_for('/style.css') ?>">
 </head>
 <body>
@@ -21,16 +21,16 @@
   <hr>
 
   <?php if (isset($notice)): ?>
-  <p class="notice"><?php echo e($notice) ?></p>
+  <p class="notice"><?php p($notice) ?></p>
   <?php endif ?>
 
   <?php if (isset($alert)): ?>
-  <p class="error"><?php echo e($alert) ?></p>
+  <p class="error"><?php p($alert) ?></p>
   <?php endif ?>
 
   <div class="post">
-    <h1><?php echo e($post['title']) ?></h1>
-    <p class="date">Posted on <?php echo e(date('Y-m-d H:i', $post['tstamp'])) ?></p>
+    <h1><?php p($post['title']) ?></h1>
+    <p class="date">Posted on <?php p(date('Y-m-d H:i', $post['tstamp'])) ?></p>
     <?php echo htmlize($post['body']) ?>
     <p>
       <?php if(auth()): ?>
@@ -41,7 +41,7 @@
     </p>
   </div>
 
-  <p><?php echo e(config('footer')) ?></p>
+  <p><?php p(config('footer')) ?></p>
 
 </div>
 <script>
