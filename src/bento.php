@@ -933,6 +933,61 @@ function prevent_cache($expires = 'Wed, 11 Jan 1984 05:00:00 GMT')
     }
 }
 
+/*
+ * Forces the download of a file to the client. If the path is not given, then
+ * only the appropriate headers will be tranmitted to the client. This is useful
+ * to stream contents that is not necessarily a physical file on the server as a
+ * file download to the client.
+ *
+ * @param string $filename Filename
+ * @param string $path     Path to file (optional)
+ * @param int    $chunks   Number of bytes to flush at a time, defaults to 4096
+ *
+ * @return bool Boolean true on success, false otherwise
+ */
+function file_download($filename, $path = null, $chunks = 4096)
+{
+    if (!headers_sent()) {
+        // Required for some browsers
+        if (ini_get('zlib.output_compression')) {
+            @ini_set('zlib.output_compression', 'Off');
+        }
+
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+
+        // Required for certain browsers
+        header('Cache-Control: private', false);
+
+        header('Content-Disposition: attachment; filename="' .
+            basename(str_replace('"', '', $filename)) . '";');
+        header('Content-Type: application/force-download');
+        header('Content-Transfer-Encoding: binary');
+
+        if (is_readable($path)) {
+            header('Content-Length: ' . filesize($path));
+
+            while(ob_get_level()) {
+                ob_end_clean();
+            }
+
+            $file = fopen($path, 'rb');
+            if (!$file) return false;
+            while (!feof($file)) {
+                echo ($buffer = fread($file, $chunks));
+                flush();
+            }
+            fclose($file);
+            return true;
+        }
+
+        return true;
+    } else {
+        return false;
+    }
+}
+
 // ## Dispatcher
 
 /**
