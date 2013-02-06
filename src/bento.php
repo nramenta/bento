@@ -914,6 +914,25 @@ function no_content()
     flush();
 }
 
+/*
+ * Forces the client to not cache the response.
+ *
+ * @param string $expires RFC 1123 date format string, defaults to a past date
+ * @return bool Boolean true on success, false if headers are already sent
+ */
+function prevent_cache($expires = 'Wed, 11 Jan 1984 05:00:00 GMT')
+{
+    if (!headers_sent()) {
+        header('Expires: ' . $expires);
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('Cache-Control: no-cache, must-revalidate, max-age=0');
+        header('Pragma: no-cache');
+        return true;
+    } else {
+        return false;
+    }
+}
+
 // ## Dispatcher
 
 /**
