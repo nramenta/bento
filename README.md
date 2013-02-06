@@ -357,6 +357,10 @@ There are a number of request, path, URL and redirection helper functions:
 - `display_template()`: Displays a rendered PHP template.
 - `no_content()`: Sends a "204 No Content" response and closes the connection.
 - `prevent_cache()`: Forces the client to not cache the response.
+
+### File and path helpers
+
+- `remove_path()`: Removes files and directories recursively.
 - `file_download()`: Forces the download of a file to the client.
 
 ### Error handling and halt

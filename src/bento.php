@@ -933,6 +933,36 @@ function prevent_cache($expires = 'Wed, 11 Jan 1984 05:00:00 GMT')
     }
 }
 
+// ## File and path helpers
+
+/*
+ * Removes files and directories recursively. If $path is a directory and $rmdir
+ * is false, then instead of deleting the directory recursively, this function
+ * will only empty the directory.
+ *
+ * @param string $path  File or directory path
+ * @param bool   $rmdir Remove referenced directory, defaults to true
+ *
+ * @return bool Boolean true on success, false otherwise
+ */
+function remove_path($path, $rmdir = true)
+{
+    if (is_file($path) || is_link($path)) {
+        return unlink($path);
+    } elseif (is_dir($path)) {
+        $objects = scandir($path);
+        foreach ($objects as $object) {
+            if ($object != '.' && $object != '..') {
+                remove_path($path . '/' . $object);
+            }
+        }
+        reset($objects);
+        return $rmdir ? rmdir($path) : true;
+    } else {
+        return false;
+    }
+}
+
 /*
  * Forces the download of a file to the client. If the path is not given, then
  * only the appropriate headers will be tranmitted to the client. This is useful
