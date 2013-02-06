@@ -361,6 +361,7 @@ There are a number of request, path, URL and redirection helper functions:
 ### File and path helpers
 
 - `remove_path()`: Removes files and directories recursively.
+- `file_upload()`: File upload handling.
 - `file_download()`: Forces the download of a file to the client.
 
 ### Error handling and halt

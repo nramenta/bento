@@ -964,6 +964,98 @@ function remove_path($path, $rmdir = true)
 }
 
 /*
+ * File upload handling. Available options are:
+ *
+ * - size: Exact file size in bytes.
+ * - min_size: Minimum file size in bytes.
+ * - max_size: Maximum file size in bytes.
+ * - types: Allowed mime types, e.g., "image/gif", "image/png".
+ * - basename: Base name sans extension.
+ * - callback: callable to call instead of having the file automatically moved.
+ *
+ * @param string $name File input field name
+ * @param string $path Either a directory or the destination file path
+ * @param array  $opts Rules and options
+ *
+ * @return string|bool Path to uploaded file on success, boolean false otherwise
+ */
+function file_upload($name, $path, array $opts = array())
+{
+    if (!isset($_FILES[$name])) return false;
+
+    if (isset($opts['size'])) {
+        $min_size = $max_size = $opts['size'];
+    } else {
+        $min_size = isset($opts['min_size']) ? $opts['min_size'] : null;
+        $max_size = isset($opts['max_size']) ? $opts['max_size'] : null;
+    }
+
+    $types = $extensions = array();
+
+    if (isset($opts['types']) && is_array($opts['types'])) {
+        foreach ($opts['types'] as $key => $val) {
+            if (is_int($key)) {
+                $types[] = $val;
+            } else {
+                $types[] = $key;
+                $extensions[$key] = $val;
+            }
+        }
+    }
+
+    $callback = isset($opts['callback']) && is_callable($opts['callback']) ?
+        $opts['callback'] : null;
+
+    $file = $_FILES[$name];
+
+    if (is_dir($path)) {
+        if (substr($path, strlen($path)-1, 1) != DIRECTORY_SEPARATOR) {
+            $path .= DIRECTORY_SEPARATOR;
+        }
+        if (isset($opts['basename'])) {
+            if (isset($extensions[$file['type']])) {
+                $ext = $extensions[$file['type']];
+            } else {
+                $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+            }
+            $dest = $path . $opts['basename'] . '.' . $ext;
+        } else {
+            $dest = $path . basename($file['name']);
+        }
+    } else {
+        $dest = $path;
+    }
+
+    if ($file['error'] != 0) {
+        goto error;
+    }
+
+    if (isset($min_size) && $file['size'] < $min_size) {
+        goto error;
+    }
+
+    if (isset($max_size) && $file['size'] > $max_size) {
+        goto error;
+    }
+
+    if ($types && !in_array($file['type'], $types)) {
+        goto error;
+    }
+
+    if (isset($callback)) {
+        return call_user_func($callback, $file, $dest, $opts);
+    }
+
+    if (move_uploaded_file($file['tmp_name'], $dest)) {
+        return $dest;
+    }
+
+    error:
+    remove_path($file['tmp_name']);
+    return false;
+}
+
+/*
  * Forces the download of a file to the client. If the path is not given, then
  * only the appropriate headers will be tranmitted to the client. This is useful
  * to stream contents that is not necessarily a physical file on the server as a
