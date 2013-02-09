@@ -1087,21 +1087,24 @@ function file_download($filename, $path = null, $chunks = 4096)
         header('Content-Type: application/force-download');
         header('Content-Transfer-Encoding: binary');
 
-        if (is_readable($path)) {
-            header('Content-Length: ' . filesize($path));
+        if (isset($path)) {
+            if (is_readable($path)) {
+                header('Content-Length: ' . filesize($path));
 
-            while(ob_get_level()) {
-                ob_end_clean();
-            }
+                while(ob_get_level()) {
+                    ob_end_clean();
+                }
 
-            $file = fopen($path, 'rb');
-            if (!$file) return false;
-            while (!feof($file)) {
-                echo ($buffer = fread($file, $chunks));
-                flush();
+                $file = fopen($path, 'rb');
+                if (!$file) return false;
+                while (!feof($file)) {
+                    echo ($buffer = fread($file, $chunks));
+                    flush();
+                }
+                fclose($file);
+                return true;
             }
-            fclose($file);
-            return true;
+            return false;
         }
 
         return true;
