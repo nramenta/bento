@@ -712,10 +712,14 @@ function shutdown()
 
 /**
  * Redirects to a given URL with configurable HTTP response code and time delay.
+ * If a time delay is given, this function will always return boolean true, else
+ * it will call `halt()` and never returns.
  *
  * @param string $url   Redirect URL
  * @param int    $code  HTTP redirect code; defaults to 302
  * @param int    $delay Refresh header value in seconds (optional)
+ *
+ * @return bool Boolean true if time delay is given
  */
 function redirect($url = null, $code = 302, $delay = 0)
 {
