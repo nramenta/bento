@@ -918,6 +918,7 @@ function no_content()
  * Forces the client to not cache the response.
  *
  * @param string $expires RFC 1123 date format string, defaults to a past date
+ *
  * @return bool Boolean true on success, false if headers are already sent
  */
 function prevent_cache($expires = 'Wed, 11 Jan 1984 05:00:00 GMT')
