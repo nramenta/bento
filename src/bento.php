@@ -735,11 +735,14 @@ function redirect($url = null, $code = 302, $delay = 0)
 }
 
 /**
- * Redirects to the URL of a given path.
+ * Redirects to the URL of a given path. Acts as a wrapper for the `redirect()`
+ * function.
  *
  * @param string $path  Redirect path
  * @param int    $code  HTTP redirect code; defaults to 302
  * @param int    $delay Refresh header value in seconds (optional)
+ *
+ * @return bool Boolean true if time delay is given
  */
 function redirect_to($path, $code = 302, $delay = 0)
 {
