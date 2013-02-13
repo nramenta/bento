@@ -979,7 +979,8 @@ function remove_path($path, $rmdir = true)
  * - max_size: Maximum file size in bytes.
  * - types: Allowed mime types, e.g., "image/gif", "image/png".
  * - basename: Base name sans extension.
- * - callback: callable to call instead of having the file automatically moved.
+ * - validator: Callable to file upload validator.
+ * - callback: Callable to call instead of having the file automatically moved.
  *
  * @param string $name File input field name
  * @param string $path Either a directory or the destination file path
@@ -1010,6 +1011,9 @@ function file_upload($name, $path, array $opts = array())
             }
         }
     }
+
+    $validator = isset($opts['validator']) && is_callable($opts['validator']) ?
+        $opts['validator'] : null;
 
     $callback = isset($opts['callback']) && is_callable($opts['callback']) ?
         $opts['callback'] : null;
@@ -1047,6 +1051,10 @@ function file_upload($name, $path, array $opts = array())
     }
 
     if ($types && !in_array($file['type'], $types)) {
+        goto error;
+    }
+
+    if (isset($validator) && !call_user_func($validator, $file, $dest, $opts)) {
         goto error;
     }
 
