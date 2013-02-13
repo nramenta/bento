@@ -866,7 +866,7 @@ function e($string, $force = false)
  */
 function p($string, $force = false)
 {
-    echo htmlspecialchars(strval($string), ENT_QUOTES, 'UTF-8', $force);
+    echo e($string, $force);
 }
 
 /**
