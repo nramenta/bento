@@ -1121,6 +1121,113 @@ function file_download($filename, $path = null, $chunks = 4096)
     }
 }
 
+// ## Form helpers
+
+/**
+ * Validate form data according to a set of rules. This function can also be
+ * used to validate arbitrary data, not just form data. Nested data and rules
+ * are also supported, as well as array data. Rules can either be a regular
+ * expression pattern, an integer filter for `filter_var()`, or a `Closure`
+ * object. If the data is not found, then the value to be tested is null.
+ *
+ * @param array $data   Set of key-value data to be validated
+ * @param array $rules  Set of key-value rules
+ * @param array $errors Set of returned error flags (optional)
+ *
+ * @return bool Boolean true if the data is valid, false otherwise
+ */
+function form_validate($data, $rules, &$errors = array())
+{
+    foreach ($rules as $key => $rule) {
+        if (is_array($rule)) {
+            $_errors = array();
+            form_validate(
+                isset($data[$key]) ? $data[$key] : null, $rule, $_errors
+            );
+            $errors[$key] = $_errors;
+            unset($_errors);
+        } else {
+            $value = isset($data[$key]) ? $data[$key] : null;
+            if (is_string($rule)) {
+                switch ($rule) {
+                case 'optional': $pattern = '/^.*$/'; break;
+                case 'required': $pattern = '/^.+$/'; break;
+                case 'integer':  $pattern = '/^\d+$/'; break;
+                case 'alphanum': $pattern = '/^[a-z0-9]+$/i'; break;
+                default: $pattern = $rule;
+                }
+                $validator = function($value) use ($pattern) {
+                    return preg_match($pattern, $value);
+                };
+            } elseif (is_int($rule)) {
+                $validator = function($value) use ($rule) {
+                    return filter_var($value, $rule);
+                };
+            } elseif ($rule instanceof \Closure) {
+                $validator = $rule;
+            } else {
+                throw new \InvalidArgumentException("unknown rule for $key");
+            }
+            if (is_array($value)) {
+                foreach ($value as $val) {
+                    $errors[$key][] = !call_user_func($validator, $val);
+                }
+            } else {
+                $errors[$key] = !call_user_func($validator, $value);
+            }
+        }
+    }
+
+    $valid = true;
+    array_walk_recursive($errors, function(&$item, $key) use (&$valid) {
+        $valid = $valid && !$item;
+    });
+    return $valid;
+}
+
+/**
+ * Returns a zipped array from a set of input arrays.
+ *
+ * Two input arrays, `[1,2,3]` and `['a','b','c']` will be zipped as:
+ *
+ * `[[1,'a'], [2,'b'], [3,'c']]`
+ *
+ * By default, uneven number of elements are included in the final result. If
+ * you want to skip sets that are missing values from the final result, pass
+ * `true` as the second argument. Individual elements of the resulting zipped
+ * array will inherit keys derived from the `$items` argument. The following:
+ *
+ * `form_zip(['letter' => ['A','B'], 'number' => [1,2]])`
+ *
+ * Will return the array:
+ *
+ * `[['letter' => 'A', 'number' => 1], ['letter' => 'B', 'number' => 2]]`
+ *
+ * @param array $items Set of input arrays
+ * @param bool  $skip  Skip sets that are missing values; defaults to false
+ *
+ * @return array
+ */
+function form_zip($items, $skip = false)
+{
+    $keys = array_keys($items);
+
+    return array_filter(call_user_func_array('array_map', array_merge(array(
+        function() use ($keys, $skip) {
+            $args = func_get_args();
+            $item = array();
+            foreach ($keys as $i => $key) {
+                if (isset($args[$i])) {
+                    $item[$key] = $args[$i];
+                } elseif ($skip) {
+                    return false;
+                }
+            }
+            return $item;
+        }
+    ), $items)));
+}
+
 // ## Dispatcher
 
 /**
