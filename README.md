@@ -364,6 +364,11 @@ There are a number of request, path, URL and redirection helper functions:
 - `file_upload()`: File upload handling.
 - `file_download()`: Forces the download of a file to the client.
 
+### Form helpers
+
+- `form_validate()`: Validate form data according to a set of rules.
+- `form_zip()`: Returns a zipped array from a set of input arrays.
+
 ### Error handling and halt
 
 Halting a request by calling `halt()` will stop execution immediately, call any
