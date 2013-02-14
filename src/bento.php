@@ -882,7 +882,8 @@ function render_template($file, $data = array())
 {
     if (!is_readable($file)) {
         throw new \RuntimeException(sprintf(
-            'template file %s is not readable', $file));
+            'template file %s is not readable', $file
+        ));
     }
 
     extract($data);
