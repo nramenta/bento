@@ -50,7 +50,7 @@ function config($key = null, $value = null)
 function apply($callable, $args = array())
 {
     if (!is_callable($callable)) {
-        throw new \RuntimeException('Invalid callable');
+        throw new \RuntimeException('invalid callable');
     }
     return call_user_func_array($callable, $args);
 }
