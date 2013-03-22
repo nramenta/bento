@@ -922,7 +922,7 @@ function no_content()
     flush();
 }
 
-/*
+/**
  * Forces the client to not cache the response.
  *
  * @param string $expires RFC 1123 date format string, defaults to a past date
@@ -944,7 +944,7 @@ function prevent_cache($expires = 'Wed, 11 Jan 1984 05:00:00 GMT')
 
 // ## File and path helpers
 
-/*
+/**
  * Removes files and directories recursively. If $path is a directory and $rmdir
  * is false, then instead of deleting the directory recursively, this function
  * will only empty the directory.
@@ -972,7 +972,7 @@ function remove_path($path, $rmdir = true)
     }
 }
 
-/*
+/**
  * File upload handling. Available options are:
  *
  * - size: Exact file size in bytes.
@@ -1072,7 +1072,7 @@ function file_upload($name, $path, array $opts = array())
     return false;
 }
 
-/*
+/**
  * Forces the download of a file to the client. If the path is not given, then
  * only the appropriate headers will be tranmitted to the client. This is useful
  * to stream contents that is not necessarily a physical file on the server as a
