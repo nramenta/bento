@@ -870,8 +870,24 @@ function p($string, $force = false)
 }
 
 /**
- * Returns a rendered PHP template as a string. Throws a RuntimeException on
- * invalid files.
+ * Displays a PHP template. Throws a RuntimeException on invalid files.
+ *
+ * @param string $file PHP template file
+ * @param array  $data Array of key-value template data
+ */
+function display_template($file, $data = array())
+{
+    if (!is_readable($file)) {
+        throw new \RuntimeException(sprintf(
+            'template file %s is not readable', $file
+        ));
+    }
+    extract($data);
+    include func_get_arg(0);
+}
+
+/**
+ * Returns a rendered PHP template as string. 
  *
  * @param string $file PHP template file
  * @param array  $data Array of key-value template data
@@ -880,27 +896,9 @@ function p($string, $force = false)
  */
 function render_template($file, $data = array())
 {
-    if (!is_readable($file)) {
-        throw new \RuntimeException(sprintf(
-            'template file %s is not readable', $file
-        ));
-    }
-
-    extract($data);
     ob_start();
-    include func_get_arg(0);
+    display_template($file, $data);
     return ob_get_clean();
-}
-
-/**
- * Displays a rendered PHP template.
- *
- * @param string $file PHP template file
- * @param array  $data Array of key-value template data
- */
-function display_template($file, $data = array())
-{
-    echo render_template($file, $data);
 }
 
 /**

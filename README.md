@@ -353,8 +353,8 @@ There are a number of request, path, URL and redirection helper functions:
 
 - `e()`: Returns an HTML-escaped string.
 - `p()`: Prints an HTML-escaped string.
-- `render_template()`: Returns a rendered PHP template as a string.
 - `display_template()`: Displays a rendered PHP template.
+- `render_template()`: Returns a rendered PHP template as string.
 - `no_content()`: Sends a "204 No Content" response and closes the connection.
 - `prevent_cache()`: Forces the client to not cache the response.
 
