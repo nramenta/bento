@@ -1235,6 +1235,35 @@ function form_zip($items, $skip = false)
     ), $items)));
 }
 
+/**
+ * Returns a key-filtered array from an input array. Key elements can be simple
+ * strings or mixed with a mapping of keys and default values for missing input
+ * elements. For example:
+ *
+ * @param array $data  Input array
+ * @param bool  $keys  Array of keys to include with optional default values
+ *
+ * @return array
+ */
+function form_filter($data, $keys)
+{
+    $filtered = array();
+    foreach ($keys as $k => $v) {
+        if (is_int($k)) {
+            if (isset($data[$v])) {
+                $filtered[$v] = $data[$v];
+            }
+        } else {
+            if (isset($data[$k])) {
+                $filtered[$k] = $data[$k];
+            } else {
+                $filtered[$k] = $v;
+            }
+        }
+    }
+    return $filtered;
+}
+
 // ## Dispatcher
 
 /**
