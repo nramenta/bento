@@ -1215,24 +1215,29 @@ function form_validate($data, $rules, &$errors = array())
  *
  * @return array
  */
-function form_zip($items, $skip = false)
+function form_zip($data, $skip = false)
 {
-    $keys = array_keys($items);
+    $keys = array_keys($data);
+    $indices = array_reduce($data, function($init, $row) {
+        return array_unique(array_merge($init, array_keys($row)));
+    }, array());
 
-    return array_filter(call_user_func_array('array_map', array_merge(array(
-        function() use ($keys, $skip) {
-            $args = func_get_args();
-            $item = array();
-            foreach ($keys as $i => $key) {
-                if (isset($args[$i])) {
-                    $item[$key] = $args[$i];
-                } elseif ($skip) {
-                    return false;
-                }
+    $zipped = array();
+    foreach ($indices as $i) {
+        $zip = array();
+        foreach ($keys as $k) {
+            if (isset($data[$k][$i])) {
+                $zip[$k] = $data[$k][$i];
+            } elseif (!$skip) {
+                $zip[$k] = null;
+            } else {
+                goto skip;
             }
-            return $item;
         }
-    ), $items)));
+        $zipped[$i] = $zip;
+        skip:
+    }
+    return $zipped;
 }
 
 /**
