@@ -1269,6 +1269,50 @@ function form_filter($data, $keys)
     return $filtered;
 }
 
+// ## Event helpers
+
+/**
+ * Gets or sets event handlers. Pass two arguments as event name and handler to
+ * register an event handler. Pass a single argument as event name to return its
+ * handlers. Returns null for unrecognized event name.
+ *
+ * @param string   $event    Event name
+ * @param callable $callback Event handler callback
+ *
+ * @return mixed
+ */
+function event_register($event = null, $callback = null)
+{
+    static $handlers = array();
+
+    if (func_num_args() > 1) {
+        $handlers[$event][] = $callback;
+    } elseif (func_num_args()) {
+        return isset($handlers[$event]) ? $handlers[$event] : null;
+    } else {
+        return $handlers;
+    }
+}
+
+/**
+ * Triggers a registered event.
+ *
+ * @param string $event Event name
+ *
+ * @return mixed
+ */
+function event_trigger($event)
+{
+    $data = func_get_args();
+    array_shift($data);
+
+    if ($handlers = event_register($event)) {
+        foreach ($handlers as $callback) {
+            apply($callback, $data);
+        }
+    }
+}
+
 // ## Dispatcher
 
 /**

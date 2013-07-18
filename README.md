@@ -370,6 +370,11 @@ There are a number of request, path, URL and redirection helper functions:
 - `form_zip()`: Returns a zipped array from a set of input arrays.
 - `form_filter()`: Returns a key-filtered array from an input array.
 
+### Event helpers
+
+- `event_register()`: Gets or sets event handlers.
+- `event_trigger()`: Triggers a registered event.
+
 ### Error handling and halt
 
 Halting a request by calling `halt()` will stop execution immediately, call any
