@@ -1157,8 +1157,8 @@ function form_validate($data, $rules, &$errors = array())
             $value = isset($data[$key]) ? $data[$key] : null;
             if (is_string($rule)) {
                 switch ($rule) {
-                case 'optional': $pattern = '/^.*$/'; break;
-                case 'required': $pattern = '/^.+$/'; break;
+                case 'optional': $pattern = '/^.*$/s'; break;
+                case 'required': $pattern = '/^.+$/s'; break;
                 case 'integer':  $pattern = '/^\d+$/'; break;
                 case 'alphanum': $pattern = '/^[a-z0-9]+$/i'; break;
                 default: $pattern = $rule;
