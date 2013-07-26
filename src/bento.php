@@ -940,7 +940,7 @@ function prevent_cache($expires = 'Wed, 11 Jan 1984 05:00:00 GMT')
     }
 }
 
-// ## File and path helpers
+// ## File helpers
 
 /**
  * Removes files and directories recursively. If $path is a directory and $rmdir
@@ -952,7 +952,7 @@ function prevent_cache($expires = 'Wed, 11 Jan 1984 05:00:00 GMT')
  *
  * @return bool Boolean true on success, false otherwise
  */
-function remove_path($path, $rmdir = true)
+function file_remove($path, $rmdir = true)
 {
     if (is_file($path) || is_link($path)) {
         return unlink($path);
@@ -960,7 +960,7 @@ function remove_path($path, $rmdir = true)
         $objects = scandir($path);
         foreach ($objects as $object) {
             if ($object != '.' && $object != '..') {
-                remove_path($path . '/' . $object);
+                file_remove($path . '/' . $object);
             }
         }
         reset($objects);
@@ -968,6 +968,14 @@ function remove_path($path, $rmdir = true)
     } else {
         return false;
     }
+}
+
+/**
+ * Alias for file_remove.
+ */
+function remove_path($path, $rmdir = true)
+{
+    return file_remove($path, $rmdir);
 }
 
 /**
@@ -1066,7 +1074,7 @@ function file_upload($name, $path, array $opts = array())
     }
 
     error:
-    remove_path($file['tmp_name']);
+    file_remove($file['tmp_name']);
     return false;
 }
 
