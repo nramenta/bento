@@ -388,7 +388,7 @@ function base_url()
 /**
  * Tests if a request was made over SSL.
  *
- * @param bool Boolean true if yes, false otherwise
+ * @return bool Boolean true if yes, false otherwise
  */
 function is_https()
 {
@@ -971,7 +971,7 @@ function file_remove($path, $rmdir = true)
 }
 
 /**
- * Alias for file_remove.
+ * Alias for file_remove. This function is deprecated and will be removed.
  */
 function remove_path($path, $rmdir = true)
 {
