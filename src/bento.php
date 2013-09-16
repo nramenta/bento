@@ -1253,18 +1253,21 @@ function form_zip($data, $skip = false)
  * strings or mixed with a mapping of keys and default values for missing input
  * elements. For example:
  *
- * @param array $data  Input array
- * @param bool  $keys  Array of keys to include with optional default values
+ * @param array $data   Input array
+ * @param array $keys   Array of keys to include with optional default values
+ * @param bool  $strict Return null on missing keys; defaults to false
  *
- * @return array
+ * @return array|null Filtered data based on keys or null on strictness failure
  */
-function form_filter($data, $keys)
+function form_filter($data, $keys, $strict = false)
 {
     $filtered = array();
     foreach ($keys as $k => $v) {
         if (is_int($k)) {
             if (isset($data[$v])) {
                 $filtered[$v] = $data[$v];
+            } elseif ($strict) {
+                return null;
             }
         } else {
             if (isset($data[$k])) {
