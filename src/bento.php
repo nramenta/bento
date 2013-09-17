@@ -10,8 +10,9 @@
 
 /**
  * Gets or sets a config value. Pass two arguments as key and value to set a
- * configuration and return the old value. Pass a single argument as key to
- * return its value. Returns null for unrecognized configuration key.
+ * configuration and return the old value. Pass a string as key to return its
+ * value. Pass an array of key-value pairs to bulk update configuration keys.
+ * Returns null for unrecognized configuration key.
  *
  * @param string $key   Configuration key
  * @param mixed  $value Configuration value
@@ -30,7 +31,11 @@ function config($key = null, $value = null)
         $storage[$key] = $value;
         return $old;
     } elseif (func_num_args()) {
-        return isset($storage[$key]) ? $storage[$key] : null;
+        if (is_array($key)) {
+            $storage = $key + $storage;
+        } else {
+            return isset($storage[$key]) ? $storage[$key] : null;
+        }
     } else {
         return $storage;
     }
