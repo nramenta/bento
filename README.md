@@ -94,6 +94,7 @@ Built-in routing functions to map routes to callbacks:
 - `post()`: Routes POST requests.
 - `form()`: Routes both GET and POST requests with automatic CSRF protection.
 - `put()`: Routes PUT requests.
+- `patch()`: Routes PATCH requests.
 - `delete()`: Routes DELETE requests.
 - `head()`: Routes HEAD requests.
 - `options()`: Routes OPTIONS requests.

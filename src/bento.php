@@ -569,6 +569,17 @@ function put($route, $callback)
 }
 
 /**
+ * Routes PATCH requests.
+ *
+ * @param string   $route    Route pattern
+ * @param callable $callback Route handler callback
+ */
+function patch($route, $callback)
+{
+    route('PATCH', $route, $callback);
+}
+
+/**
  * Routes DELETE requests.
  *
  * @param string   $route    Route pattern
