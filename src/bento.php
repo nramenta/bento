@@ -1280,12 +1280,26 @@ function form_validate($data, $rules, &$errors = array())
  *
  * @return array
  */
-function form_zip($data, $skip = false)
+function form_zip(array $data, $skip = false)
 {
+    $invalids = array();
     $keys = array_keys($data);
-    $indices = array_reduce($data, function($init, $row) {
+    $i = -1;
+    $indices = array_reduce($data, function($init, $row) use (&$invalids, &$i) {
+        $i += 1;
+        if (!is_array($row)) {
+            $invalids[] = $i;
+            return $init;
+        }
         return array_unique(array_merge($init, array_keys($row)));
     }, array());
+
+    if (!empty($invalids)) {
+        foreach ($invalids as $i) {
+            unset($data[$keys[$i]]);
+        }
+        $keys = array_keys($data);
+    }
 
     $zipped = array();
     foreach ($indices as $i) {
