@@ -1171,6 +1171,31 @@ function file_download($filename, $path = null, $chunks = 4096)
 // ## Form helpers
 
 /**
+ * Recursively tests if an array contains a given value.
+ *
+ * @param array $array  Array to be tested
+ * @param mixed $test   Value to compare
+ * @param bool  $strict Flag to do a strict comparison; defaults to true
+ *
+ * @return bool Boolean true if an array contains a given value, false otherwise
+ */
+function form_any(array $array, $test = true, $strict = true)
+{
+    foreach ($array as $k => $v) {
+        if (is_array($v)) {
+            if (form_any($v, $test, $strict)) return true;
+        } else {
+            if ($strict) {
+                if ($v === $test) return true;
+            } else {
+                if ($v == $test) return true;
+            }
+        }
+    }
+    return false;
+}
+
+/**
  * Validate form data according to a set of rules. This function can also be
  * used to validate arbitrary data, not just form data. Nested data and rules
  * are also supported, as well as array data. Rules can either be a regular
