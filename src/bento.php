@@ -240,7 +240,7 @@ function flash_remove($key = null)
  */
 function flash_write()
 {
-    if (!isset($_SESSION)) return false;
+    if (!isset($_SESSION)) session_start();
 
     $flash = config('_flash');
 

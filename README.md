@@ -219,9 +219,8 @@ get('/step-2', function()
 
 In the above example, when a request to `/step-2` is made right after a request
 to `/step-1`, the flash variable `words` is available and set. If the user then
-visits any other URL after that, or visits a URL with a route handler that uses
-the same flash variable in between those requests, then that flash variable will
-yield `null`; it has been used and thus ceased to exist.
+visits any other URL after or in between those requests, all available flash
+variables will, by default, be cleared and would yield `null`.
 
 There are a number flash-related helper functions:
 
