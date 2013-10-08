@@ -375,6 +375,7 @@ There are a number of request, path, URL and redirection helper functions:
 ### Form helpers
 
 - `form_any()`: Recursively tests if an array contains a given value.
+- `form_test()`: Tests if a value adheres to a rule.
 - `form_validate()`: Validate form data according to a set of rules.
 - `form_zip()`: Returns a zipped array from a set of input arrays.
 - `form_filter()`: Returns a key-filtered array from an input array.

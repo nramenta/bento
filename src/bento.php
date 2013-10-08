@@ -1196,11 +1196,87 @@ function form_any(array $array, $test = true, $strict = true)
 }
 
 /**
+ * Tests if a value adheres to a rule. Rules can be regular expression strings,
+ * one of FILTER_VALIDATE_* constants available from PHP's builtin filter
+ * extension, or a boolean returning closure object.
+ *
+ * @param mixed $value Value to test
+ * @param mixed $rule  Rule to test
+ *
+ * @return bool Boolean true if the value passes test, false otherwise
+ */
+function form_test($value, $rule)
+{
+    if (is_string($rule)) {
+        switch ($rule) {
+        case 'optional': $pattern = '/^.*$/s'; break;
+        case 'required': $pattern = '/^.+$/s'; break;
+        case 'integer' : $pattern = '/^\d+$/'; break;
+        case 'alphanum': $pattern = '/^[a-z0-9]+$/i'; break;
+        default: $pattern = $rule;
+        }
+        $validator = function($value) use ($pattern) {
+            return preg_match($pattern, $value);
+        };
+    } elseif (is_int($rule)) {
+        $validator = function($value) use ($rule) {
+            return filter_var($value, $rule);
+        };
+    } elseif ($rule instanceof \Closure) {
+        $validator = $rule;
+    } else {
+        throw new \InvalidArgumentException('unknown rule');
+    }
+
+    return (bool) call_user_func($validator, $value);
+}
+
+/**
  * Validate form data according to a set of rules. This function can also be
  * used to validate arbitrary data, not just form data. Nested data and rules
  * are also supported, as well as array data. Rules can either be a regular
  * expression pattern, an integer filter for `filter_var()`, or a `Closure`
  * object. If the data is not found, then the value to be tested is null.
+ *
+ * Example:
+ *
+ * $data = array(
+ *     'name' => 'John Doe',
+ *     'age'  => 30,
+ * );
+ *
+ * $rule = array(
+ *     'name' => 'required',
+ *     'age'  => 'integer',
+ * );
+ *
+ * $valid = form_validate($data, $rule, $errors);
+ *
+ * if ($valid) {
+ *     // data is valid, do what you must do.
+ * }
+ *
+ * The variable $valid will evaluates to `true` while $errors will have the
+ * following structure:
+ *
+ * array(
+ *     'name' => false,
+ *     'age'  => false
+ * )
+ *
+ * The $errors variable contains error flags. `true` means the input does not
+ * conform to the rule while `false` means the input *does* conform to the rule.
+ *
+ * Although it may seem backwards (i.e., false means OK), this structure gives
+ * us the convenience of outputting error messages in our templates, using plain
+ * PHP, as follows:
+ *
+ * <?php if $errors['name'] ?>
+ * <p>The name field is required.</p>
+ * <?php endif ?>
+ *
+ * The above rules 'required' and 'integer' are builtin shortcuts to the string
+ * '/^.+$/' and '/^\d+$/' respectively.
  *
  * @param array $data   Set of key-value data to be validated
  * @param array $rules  Set of key-value rules
@@ -1208,53 +1284,82 @@ function form_any(array $array, $test = true, $strict = true)
  *
  * @return bool Boolean true if the data is valid, false otherwise
  */
-function form_validate($data, $rules, &$errors = array())
+function form_validate(array $data, array $rules, &$errors = array())
 {
+    if (!isset($errors)) $errors = array();
+
+    $pattern = '/^([a-zA-Z0-9-_ ]+)\[(?:(\d+)(?:(,)(\d+)?)?)?\]$/';
+
     foreach ($rules as $key => $rule) {
-        if (is_array($rule)) {
-            $_errors = array();
-            form_validate(
-                isset($data[$key]) ? $data[$key] : null, $rule, $_errors
-            );
-            $errors[$key] = $_errors;
-            unset($_errors);
-        } else {
-            $value = isset($data[$key]) ? $data[$key] : null;
-            if (is_string($rule)) {
-                switch ($rule) {
-                case 'optional': $pattern = '/^.*$/s'; break;
-                case 'required': $pattern = '/^.+$/s'; break;
-                case 'integer':  $pattern = '/^\d+$/'; break;
-                case 'alphanum': $pattern = '/^[a-z0-9]+$/i'; break;
-                default: $pattern = $rule;
-                }
-                $validator = function($value) use ($pattern) {
-                    return preg_match($pattern, $value);
-                };
-            } elseif (is_int($rule)) {
-                $validator = function($value) use ($rule) {
-                    return filter_var($value, $rule);
-                };
-            } elseif ($rule instanceof \Closure) {
-                $validator = $rule;
-            } else {
-                throw new \InvalidArgumentException("unknown rule for $key");
+
+        $array = false;
+        $min = $max = false;
+        if (preg_match($pattern, $key, $match)) {
+            $key = $match[1];
+            if (isset($match[2])) {
+                $min = $match[2];
             }
-            if (is_array($value)) {
-                foreach ($value as $val) {
-                    $errors[$key][] = !call_user_func($validator, $val);
+            if (isset($match[3])) {
+                $max = false;
+            } else {
+                $max = $min;
+            }
+            if (isset($match[4])) {
+                $max = $match[4];
+            }
+            $array = true;
+        }
+
+        if (!isset($data[$key])) $data[$key] = null;
+
+        if ($array) {
+            $errors[$key]['count'] = false;
+            if (is_array($data[$key])) {
+                if ($min !== false && count($data[$key]) < $min) {
+                    $errors[$key]['count'] = true;
+                }
+                if ($max !== false && count($data[$key]) > $max) {
+                    $errors[$key]['count'] = true;
+                }
+                foreach ($data[$key] as $value) {
+                    if (is_array($value)) {
+                        if (is_array($rule)) {
+                            form_validate($value, $rule, $errors[$key][]);
+                        } else {
+                            $errors[$key][] = true;
+                        }
+                    } else {
+                        if (is_array($rule)) {
+                            $errors[$key][] = true;
+                        } else {
+                            $errors[$key][] = !form_test($value, $rule);
+                        }
+                    }
+                }
+                if (empty($data[$key])) {
+                    $errors[$key]['count'] = true;
                 }
             } else {
-                $errors[$key] = !call_user_func($validator, $value);
+                $errors[$key]['count'] = true;
+            }
+        } else {
+            if (is_array($data[$key])) {
+                if (is_array($rule)) {
+                    form_validate($data[$key], $rule, $errors[$key]);
+                } else {
+                    $errors[$key] = true;
+                }
+            } else {
+                if (is_array($rule)) {
+                    $errors[$key] = true;
+                } else {
+                    $errors[$key] = !form_test($data[$key], $rule);
+                }
             }
         }
     }
 
-    $valid = true;
-    array_walk_recursive($errors, function(&$item, $key) use (&$valid) {
-        $valid = $valid && !$item;
-    });
-    return $valid;
+    return !form_any($errors);
 }
 
 /**
