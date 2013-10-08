@@ -22,8 +22,9 @@
 function config($key = null, $value = null)
 {
     static $storage = array(
-        '_flash' => '_flash',
-        '_csrf'  => '_csrf',
+        '_flash'  => '_flash',
+        '_csrf'   => '_csrf',
+        '_method' => '_method',
     );
 
     if (func_num_args() > 1) {
@@ -331,14 +332,29 @@ function route_match($route, $path, &$matches = null, &$redirect = null)
  * Returns the request method or tests if the current request method matches the
  * one given as argument. Request methods are *case sensitive*.
  *
- * @param string $method Expected request method (optional)
+ * @param string $test Expected request method (optional)
  *
  * @return mixed Either a string representing the request method or a bool
  */
-function request_method($method = null)
+function request_method($test = null)
 {
-    return isset($method) ?
-        $method === $_SERVER['REQUEST_METHOD'] : $_SERVER['REQUEST_METHOD'];
+    $method = $_SERVER['REQUEST_METHOD'];
+
+    $_method = config('_method');
+
+    if ($method === 'POST') {
+        if (isset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
+            $method = $_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'];
+        } elseif (isset($_POST[$_method])) {
+            $method = $_POST[$_method];
+        }
+    }
+
+    if (isset($test)) {
+        return $test === $method;
+    } else {
+        return $method;
+    }
 }
 
 /**

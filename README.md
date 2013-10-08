@@ -176,6 +176,14 @@ get('/about', function()
 A request to `/about/` will result in a "404 Not Found" error. This behavior is
 consistent with most popular web servers.
 
+### Method override
+
+You can override the POST HTTP method by using two methods:
+
+1. Send a X-HTTP-Method-Override: METHOD header as part of your request, where
+   METHOD is an overriding HTTP method such as PUT, DELETE, or PATCH.
+2. Send the overriding method as `_method` in your request data.
+
 ### Routing events
 
 - `before`: Triggered just before a route handler is about to be called;
