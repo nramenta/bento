@@ -314,6 +314,9 @@ top of your controller file:
 config('_csrf', 'custom_csrf_key');
 ```
 
+Another way to send the CSRF token is by sending a X-CSRF-Token HTTP header with
+your CSRF token in it along with your request.
+
 ### Post-Redirect-Get pattern
 
 [Post/Redirect/Get][PRG] is a web development design pattern that prevents some

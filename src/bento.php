@@ -860,12 +860,16 @@ function prevent_csrf()
         halt(400, 'csrf');
     }
 
-    if (request_method('POST')) {
-        if (!isset($_POST[$csrf]) || $_POST[$csrf] != $token) {
+    if (isset($_SERVER['HTTP_X_CSRF_TOKEN'])) {
+        if ($_SERVER['HTTP_X_CSRF_TOKEN'] !== $token) {
             halt(400, 'csrf');
         }
-    } elseif (request_method('GET')) {
-        if (!isset($_GET[$csrf]) || $_GET[$csrf] != $token) {
+    } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (!isset($_POST[$csrf]) || $_POST[$csrf] !== $token) {
+            halt(400, 'csrf');
+        }
+    } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        if (!isset($_GET[$csrf]) || $_GET[$csrf] !== $token) {
             halt(400, 'csrf');
         }
     }
