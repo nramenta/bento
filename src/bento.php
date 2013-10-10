@@ -699,16 +699,20 @@ function error($code = null, $callback = null)
 
 /**
  * Halts the current response, sends any applicable HTTP response code header,
- * calls any custom error handler, and exits.
+ * calls any custom error handler, and exits. Returns false *only* if `halt()`
+ * was called with a valid HTTP code but the headers are already sent.
  *
  * @param mixed $code    Halt code, one of HTTP 4xx or 5xx or a string
  * @param mixed $message Message to be sent to the error handler callback
+ *
+ * @return bool Boolean false if headers are already sent
  */
 function halt($code = null, $message = null)
 {
     $status = http_status($code);
 
     if (isset($status)) {
+        if (headers_sent()) return false;
         header("HTTP/1.1 $code $status", true, $code);
     }
 
