@@ -127,7 +127,7 @@ function flash($key = null, $value = null, $keep = true)
  * @param int    $code  HTTP redirect code; defaults to 302
  * @param int    $delay Refresh header value in seconds (optional)
  */
-function flash_redirect($vars, $url = null, $code = 302, $delay = 0)
+function flash_redirect($vars, $url = null, $code = 302, $delay = null)
 {
     foreach ($vars as $key => $value) {
         $delay ? flash_now($key, $value) : flash($key, $value);
@@ -143,7 +143,7 @@ function flash_redirect($vars, $url = null, $code = 302, $delay = 0)
  * @param int    $code  HTTP redirect code; defaults to 302
  * @param int    $delay Refresh header value in seconds (optional)
  */
-function flash_redirect_to($vars, $path, $code = 302, $delay = 0)
+function flash_redirect_to($vars, $path, $code = 302, $delay = null)
 {
     return flash_redirect($vars, url_for($path), $code, $delay);
 }
@@ -780,7 +780,7 @@ function redirect($url = null, $code = 302, $delay = null)
  *
  * @return bool Boolean true if time delay is given
  */
-function redirect_to($path, $code = 302, $delay = 0)
+function redirect_to($path, $code = 302, $delay = null)
 {
     return redirect(url_for($path), $code, $delay);
 }
