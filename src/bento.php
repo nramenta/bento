@@ -760,9 +760,9 @@ function shutdown()
  */
 function redirect($url = null, $code = 302, $delay = null)
 {
-    $url = isset($url) ? $url : url_for();
-
     if (headers_sent()) return false;
+
+    $url = isset($url) ? $url : url_for();
 
     if (isset($delay)) {
         header('Refresh: '. $delay .'; url=' . $url, true);
