@@ -744,25 +744,29 @@ function shutdown()
 
 /**
  * Redirects to a given URL with configurable HTTP response code and time delay.
- * If a time delay is given, this function will always return boolean true, else
- * it will call `halt()` and never returns.
+ * If a time delay is given, this function will return boolean true, else it
+ * will call `halt()` and never returns. If headers are already sent, returns 
+ * false.
  *
  * @param string $url   Redirect URL
  * @param int    $code  HTTP redirect code; defaults to 302
  * @param int    $delay Refresh header value in seconds (optional)
  *
- * @return bool Boolean true if time delay is given
+ * @return bool Boolean true on success, false if headers are already sent
  */
-function redirect($url = null, $code = 302, $delay = 0)
+function redirect($url = null, $code = 302, $delay = null)
 {
     $url = isset($url) ? $url : url_for();
 
-    if ($delay) {
+    if (headers_sent()) return false;
+
+    if (isset($delay)) {
         header('Refresh: '. $delay .'; url=' . $url, true);
     } else {
         header('Location: ' . $url, true, $code);
         halt($code);
     }
+
     return true;
 }
 
