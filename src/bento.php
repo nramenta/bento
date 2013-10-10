@@ -946,6 +946,8 @@ function render_template($file, $data = array())
  */
 function no_content()
 {
+    if (headers_sent()) return false;
+
     header('HTTP/1.1 204 No Content');
     header('Content-Length: 0');
     header('Connection: close');
@@ -954,6 +956,8 @@ function no_content()
         ob_end_clean();
     }
     flush();
+
+    return true;
 }
 
 /**
