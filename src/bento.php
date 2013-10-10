@@ -1131,48 +1131,46 @@ function file_upload($name, $path, array $opts = array())
  */
 function file_download($filename, $path = null, $chunks = 4096)
 {
-    if (!headers_sent()) {
-        // Required for some browsers
-        if (ini_get('zlib.output_compression')) {
-            @ini_set('zlib.output_compression', 'Off');
-        }
+    if (headers_sent()) return false;
 
-        header('Pragma: public');
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+    // Required for some browsers
+    if (ini_get('zlib.output_compression')) {
+        @ini_set('zlib.output_compression', 'Off');
+    }
 
-        // Required for certain browsers
-        header('Cache-Control: private', false);
+    header('Pragma: public');
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 
-        header('Content-Disposition: attachment; filename="' .
-            basename(str_replace('"', '', $filename)) . '";');
-        header('Content-Type: application/force-download');
-        header('Content-Transfer-Encoding: binary');
+    // Required for certain browsers
+    header('Cache-Control: private', false);
 
-        if (isset($path)) {
-            if (is_readable($path)) {
-                header('Content-Length: ' . filesize($path));
+    header('Content-Disposition: attachment; filename="' .
+        basename(str_replace('"', '', $filename)) . '";');
+    header('Content-Type: application/force-download');
+    header('Content-Transfer-Encoding: binary');
 
-                while(ob_get_level()) {
-                    ob_end_clean();
-                }
+    if (isset($path)) {
+        if (is_readable($path)) {
+            header('Content-Length: ' . filesize($path));
 
-                $file = fopen($path, 'rb');
-                if (!$file) return false;
-                while (!feof($file)) {
-                    echo ($buffer = fread($file, $chunks));
-                    flush();
-                }
-                fclose($file);
-                return true;
+            while(ob_get_level()) {
+                ob_end_clean();
             }
-            return false;
-        }
 
-        return true;
-    } else {
+            $file = fopen($path, 'rb');
+            if (!$file) return false;
+            while (!feof($file)) {
+                echo ($buffer = fread($file, $chunks));
+                flush();
+            }
+            fclose($file);
+            return true;
+        }
         return false;
     }
+
+    return true;
 }
 
 // ## Form helpers
