@@ -969,15 +969,14 @@ function no_content()
  */
 function prevent_cache($expires = 'Wed, 11 Jan 1984 05:00:00 GMT')
 {
-    if (!headers_sent()) {
-        header('Expires: ' . $expires);
-        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-        header('Cache-Control: no-cache, must-revalidate, max-age=0');
-        header('Pragma: no-cache');
-        return true;
-    } else {
-        return false;
-    }
+    if (headers_sent()) return false;
+
+    header('Expires: ' . $expires);
+    header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+    header('Cache-Control: no-cache, must-revalidate, max-age=0');
+    header('Pragma: no-cache');
+
+    return true;
 }
 
 // ## File helpers
