@@ -1175,16 +1175,17 @@ function file_download($filename, $path = null, $chunks = 4096)
 /**
  * Recursively tests if an array contains a given value.
  *
- * @param array $array  Array to be tested
- * @param mixed $test   Value to compare
- * @param bool  $strict Flag to do a strict comparison; defaults to true
+ * @param array $array     Array to be tested
+ * @param mixed $test      Value to compare
+ * @param bool  $strict    Flag to do a strict comparison; defaults to true
+ * @param bool  $recursive Flag to test array recursively; defaults to true
  *
  * @return bool Boolean true if an array contains a given value, false otherwise
  */
-function form_any(array $array, $test = true, $strict = true)
+function form_any(array $array, $test = true, $strict = true, $recursive = true)
 {
     foreach ($array as $k => $v) {
-        if (is_array($v)) {
+        if (is_array($v) && $recursive) {
             if (form_any($v, $test, $strict)) return true;
         } else {
             if ($strict) {
