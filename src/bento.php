@@ -636,7 +636,7 @@ function options($route, $callback)
  */
 function any($route, $callback)
 {
-    route(array('GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS'),
+    route(array('GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'),
         $route, $callback);
 }
 
