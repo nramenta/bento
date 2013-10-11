@@ -699,20 +699,16 @@ function error($code = null, $callback = null)
 
 /**
  * Halts the current response, sends any applicable HTTP response code header,
- * calls any custom error handler, and exits. Returns false *only* if `halt()`
- * was called with a valid HTTP code but the headers are already sent.
+ * calls any custom error handler, and exits.
  *
  * @param mixed $code    Halt code, one of HTTP 4xx or 5xx or a string
  * @param mixed $message Message to be sent to the error handler callback
- *
- * @return bool Boolean false if headers are already sent
  */
 function halt($code = null, $message = null)
 {
     $status = http_status($code);
 
     if (isset($status)) {
-        if (headers_sent()) return false;
         header("HTTP/1.1 $code $status", true, $code);
     }
 
@@ -737,7 +733,7 @@ function shutdown()
             $content_length += ob_get_length();
             ob_end_clean();
         }
-        if (!headers_sent()) header('Content-Length: ' . $content_length);
+        header('Content-Length: ' . $content_length);
     } else {
         while (ob_get_level()) ob_end_flush();
     }
@@ -749,19 +745,16 @@ function shutdown()
 /**
  * Redirects to a given URL with configurable HTTP response code and time delay.
  * If a time delay is given, this function will return boolean true, else it
- * will call `halt()` and never returns. If headers are already sent, returns 
- * false.
+ * will call `halt()` and never returns.
  *
  * @param string $url   Redirect URL
  * @param int    $code  HTTP redirect code; defaults to 302
  * @param int    $delay Refresh header value in seconds (optional)
  *
- * @return bool Boolean true on success, false if headers are already sent
+ * @return bool Boolean true on success
  */
 function redirect($url = null, $code = 302, $delay = null)
 {
-    if (headers_sent()) return false;
-
     $url = isset($url) ? $url : url_for();
 
     if (isset($delay)) {
@@ -951,11 +944,11 @@ function render_template($file, $data = array())
  * by the end of the function. At least one session operation, if any, should
  * precede the call to this function. Failure to do so will result in a PHP
  * warning if you're using session cookies.
+ *
+ * @return bool Boolean true on success
  */
 function no_content()
 {
-    if (headers_sent()) return false;
-
     header('HTTP/1.1 204 No Content');
     header('Content-Length: 0');
     header('Connection: close');
@@ -973,12 +966,10 @@ function no_content()
  *
  * @param string $expires RFC 1123 date format string, defaults to a past date
  *
- * @return bool Boolean true on success, false if headers are already sent
+ * @return bool Boolean true on success
  */
 function prevent_cache($expires = 'Wed, 11 Jan 1984 05:00:00 GMT')
 {
-    if (headers_sent()) return false;
-
     header('Expires: ' . $expires);
     header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
     header('Cache-Control: no-cache, must-revalidate, max-age=0');
@@ -1139,8 +1130,6 @@ function file_upload($name, $path, array $opts = array())
  */
 function file_download($filename, $path = null, $chunks = 4096)
 {
-    if (headers_sent()) return false;
-
     // Required for some browsers
     if (ini_get('zlib.output_compression')) {
         @ini_set('zlib.output_compression', 'Off');
