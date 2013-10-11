@@ -1214,7 +1214,7 @@ function form_test($value, $rule)
         switch ($rule) {
         case 'optional': $pattern = '/^.*$/s'; break;
         case 'required': $pattern = '/^.+$/s'; break;
-        case 'integer' : $pattern = '/^\d+$/'; break;
+        case 'digits'  : $pattern = '/^\d+$/'; break;
         case 'alphanum': $pattern = '/^[a-z0-9]+$/i'; break;
         default: $pattern = $rule;
         }
