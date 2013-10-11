@@ -629,7 +629,7 @@ function options($route, $callback)
 }
 
 /**
- * Routes GET, POST, PUT, DELETE, HEAD, and OPTIONS requests.
+ * Routes GET, POST, PUT, PATCH, DELETE, HEAD, and OPTIONS requests.
  *
  * @param string   $route    Route pattern
  * @param callable $callback Route handler callback
