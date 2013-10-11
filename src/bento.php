@@ -1009,14 +1009,6 @@ function file_remove($path, $rmdir = true)
 }
 
 /**
- * Alias for file_remove. This function is deprecated and will be removed.
- */
-function remove_path($path, $rmdir = true)
-{
-    return file_remove($path, $rmdir);
-}
-
-/**
  * File upload handling. Available options are:
  *
  * - size: Exact file size in bytes.
