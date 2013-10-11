@@ -471,7 +471,7 @@ function params($name = null, $value = null)
  * as the second argument overrides existing ones.
  *
  * @param string $path Path for the returned URL (optional)
- * @param array  $args Query string for the returned URL (optional)
+ * @param array  $args Array of key-value query strings (optional)
  *
  * @return string
  */
@@ -1382,8 +1382,8 @@ function form_validate(array $data, array $rules, &$errors = array())
  *
  * `[['letter' => 'A', 'number' => 1], ['letter' => 'B', 'number' => 2]]`
  *
- * @param array $items Set of input arrays
- * @param bool  $skip  Skip sets that are missing values; defaults to false
+ * @param array $data Set of input arrays
+ * @param bool  $skip Skip sets that are missing values; defaults to false
  *
  * @return array
  */
