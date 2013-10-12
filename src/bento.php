@@ -964,16 +964,13 @@ function no_content()
 /**
  * Forces the client to not cache the response.
  *
- * @param string $expires RFC 1123 date format string, defaults to a past date
- *
  * @return bool Boolean true on success
  */
-function prevent_cache($expires = 'Wed, 11 Jan 1984 05:00:00 GMT')
+function prevent_cache()
 {
-    header('Expires: ' . $expires);
     header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-    header('Cache-Control: no-cache, must-revalidate, max-age=0');
-    header('Pragma: no-cache');
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Cache-Control: post-check=0, pre-check=0', false);
 
     return true;
 }
