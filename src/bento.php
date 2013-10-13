@@ -1205,12 +1205,14 @@ function form_test($value, $rule)
         case 'required': $pattern = '/^.+$/s'; break;
         case 'digits'  : $pattern = '/^\d+$/'; break;
         case 'alphanum': $pattern = '/^[a-z0-9]+$/i'; break;
+        case 'email'   : $rule = FILTER_VALIDATE_EMAIL; goto email;
         default: $pattern = $rule;
         }
         $validator = function($value) use ($pattern) {
             return preg_match($pattern, $value);
         };
     } elseif (is_int($rule)) {
+        email:
         $validator = function($value) use ($rule) {
             return filter_var($value, $rule) !== false;
         };
