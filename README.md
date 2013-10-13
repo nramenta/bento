@@ -48,7 +48,7 @@ do the following:
 
 ```
 location /myapp {
-    try_file $uri $uri/ /myapp/index.php?$query_string;
+    try_files $uri $uri/ /myapp/index.php?$query_string;
 }
 ```
 
