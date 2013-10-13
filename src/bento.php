@@ -1212,7 +1212,12 @@ function form_test($value, $rule)
         };
     } elseif (is_int($rule)) {
         $validator = function($value) use ($rule) {
-            return filter_var($value, $rule);
+            return filter_var($value, $rule) !== false;
+        };
+    } elseif (is_array($rule)) {
+        $validator = function($value) use ($rule) {
+            array_unshift($rule, $value);
+            return call_user_func_array('filter_var', $rule) !== false;
         };
     } elseif ($rule instanceof \Closure) {
         $validator = $rule;
