@@ -1246,7 +1246,7 @@ function form_test($value, $rule)
  *
  * $rule = array(
  *     'name' => 'required',
- *     'age'  => 'integer',
+ *     'age'  => 'digits',
  * );
  *
  * $valid = form_validate($data, $rule, $errors);
