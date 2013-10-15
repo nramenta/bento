@@ -1428,6 +1428,12 @@ function form_zip(array $data, $skip = false)
  * strings or mixed with a mapping of keys and default values for missing input
  * elements. For example:
  *
+ * $data = ['name' => 'John Doe', 'password' => 'p4ssw0rd'];
+ *
+ * $filtered = form_filter($data, ['name', 'email' => 'N/A'])
+ *
+ * $filtered == ['name' => 'John Doe', 'email' => 'N/A']; // evaluates to true
+ *
  * @param array $data   Input array
  * @param array $keys   Array of keys to include with optional default values
  * @param bool  $strict Return null on missing keys; defaults to false
