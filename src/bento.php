@@ -1312,6 +1312,9 @@ function form_validate(array $data, array $rules, &$errors = array())
         if (!isset($data[$key])) $data[$key] = null;
 
         if ($array) {
+            if (!isset($errors[$key]) || !is_array($errors[$key])) {
+                $errors[$key] = array();
+            }
             $errors[$key]['count'] = false;
             if (is_array($data[$key])) {
                 if ($min !== false && count($data[$key]) < $min) {
