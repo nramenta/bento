@@ -1287,7 +1287,7 @@ function form_validate(array $data, array $rules, &$errors = array())
 {
     if (!isset($errors)) $errors = array();
 
-    $pattern = '/^([a-zA-Z0-9-_ ]+)\[(?:(\d+)(?:(,)(\d+)?)?)?\]$/';
+    $pattern = '/^([a-zA-Z0-9-_ ]+)\[(?:(\d+)?(?:(,)(\d+)?)?)?\]$/';
 
     foreach ($rules as $key => $rule) {
 
@@ -1296,7 +1296,7 @@ function form_validate(array $data, array $rules, &$errors = array())
         if (preg_match($pattern, $key, $match)) {
             $key = $match[1];
             if (isset($match[2])) {
-                $min = $match[2];
+                $min = $match[2] == '' ? 0 : $match[2];
             }
             if (isset($match[3])) {
                 $max = false;
@@ -1337,9 +1337,6 @@ function form_validate(array $data, array $rules, &$errors = array())
                             $errors[$key][] = !form_test($value, $rule);
                         }
                     }
-                }
-                if (empty($data[$key])) {
-                    $errors[$key]['count'] = true;
                 }
             } else {
                 $errors[$key]['count'] = true;
