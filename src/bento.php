@@ -514,23 +514,29 @@ function url_for($path = null, $args = array())
 /**
  * Maps a route to a callback.
  *
- * @param mixed    $methods  String or an array of method names
- * @param string   $route    Route pattern
- * @param callable $callback Route handler callback
+ * @param string|array $methods  String or an array of method names
+ * @param string|array $routes   String or an array of route patterns
+ * @param callable     $callback Route handler callback
  *
  * @return mixed
  */
-function route($methods = null, $route = null, $callback = null)
+function route($methods = null, $routes = null, $callback = null)
 {
     static $callbacks = array();
 
+    if (is_string($methods)) {
+        $methods = array($methods);
+    }
+
+    if (is_string($routes)) {
+        $routes = array($routes);
+    }
+
     if (func_num_args() > 2) {
-        if (is_array($methods)) {
+        foreach ($routes as $route) {
             foreach ($methods as $method) {
                 $callbacks[$route][$method] = $callback;
             }
-        } else {
-            $callbacks[$route][$methods] = $callback;
         }
     } else {
         return $callbacks;
