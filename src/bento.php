@@ -358,7 +358,11 @@ function request_method($test = null)
     }
 
     if (isset($test)) {
-        return $test === $method;
+        if (is_array($test)) {
+            return in_array($method, $test, true);
+        } else {
+            return $method === $test;
+        }
     } else {
         return $method;
     }
