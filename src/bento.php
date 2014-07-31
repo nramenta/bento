@@ -586,15 +586,16 @@ function route($methods = null, $routes = null, $callback = null)
 {
     static $callbacks = array();
 
-    if (is_string($methods)) {
-        $methods = array($methods);
-    }
-
-    if (is_string($routes)) {
-        $routes = array($routes);
-    }
-
     if (func_num_args() > 2) {
+
+        if (is_string($methods)) {
+            $methods = array($methods);
+        }
+
+        if (is_string($routes)) {
+            $routes = array($routes);
+        }
+
         foreach ($routes as $route) {
             foreach ($methods as $method) {
                 $callbacks[$route][$method] = $callback;
