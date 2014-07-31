@@ -491,44 +491,81 @@ function params($name = null, $value = null)
 }
 
 /**
- * Returns the fully-qualified URL for a specific path. To get the URL of the
- * current request, pass null as the first argument. Query string array passed
- * as the second argument overrides existing ones.
+ * Returns the fully-qualified URL for a specific route or path. To get the URL
+ * of the current request, pass null as the first argument. Parameter array
+ * passed as the second argument overrides existing ones. Unused parameters will
+ * be appended as query strings if the third parameter is set to true.
  *
- * @param string $path Path for the returned URL (optional)
- * @param array  $args Array of key-value query strings (optional)
+ * @param string $route     Route or path for the returned URL (optional)
+ * @param array  $params    Array of key-value parameters (optional)
+ * @param bool   $append_qs Append query string or not; defaults to true
  *
  * @return string
  */
-function url_for($path = null, $args = array())
+function url_for($route = null, $params = array(), $append_qs = true)
 {
-    if (func_num_args() === 1) {
-        if (is_array(func_get_arg(0))) {
-            $path = null;
-            $args = func_get_arg(0);
-        }
+    if (($num_args = func_num_args()) < 3 && is_array($route)) {
+        $append_qs = $num_args > 1 ? $params : $append_qs;
+        $params = $route;
+        $route = request_route();
     }
+
+    if (!isset($route)) {
+        $route = request_path();
+    }
+
+    $qs = $params;
+
+    $replace = function($match) use (&$params, &$qs) {
+
+        if (array_key_exists($match['name'], $params)) {
+            switch ($match['rule']) {
+            case '' : $rule = '[^\/]+'; break;
+            case '#': $rule = '\d+'; break;
+            case '$': $rule = '[a-zA-Z0-9-_]+'; break;
+            case '*': $rule = '.+'; break;
+            default : $rule = $match['rule']; break;
+            }
+            $param = $params[$match['name']];
+            if (preg_match('#^' . $rule . '$#', $param)) {
+                unset($qs[$match['name']]);
+                return $param;
+            } else {
+                throw new \Exception($param . ' does not match ' . $rule);
+            }
+        } else {
+            throw new \Exception('missing route parameter ' . $match['name']);
+        }
+    };
+
+    if (!isset($path)) {
+        $path = request_path();
+    }
+
+    static $pattern = '/<(?:(?P<rule>.+?):)?(?P<name>[a-z_][a-z0-9_]+)>/i';
+
+    $path = preg_replace_callback($pattern, $replace, $route);
 
     $schema = is_https() ? 'https://' : 'http://';
 
     $host = $_SERVER['HTTP_HOST'];
 
-    $parts = parse_url(
-        $schema . $host .
-        ($path ? base_path($path) : $_SERVER['REQUEST_URI'])
-    );
+    $parts = parse_url($schema . $host . base_path($path));
+
+    if (!$append_qs || empty($qs)) goto url;
 
     if (isset($parts['query'])) {
         parse_str($parts['query'], $query);
-        $query = array_merge($query, $args);
+        $query = array_merge($query, $qs);
     } else {
-        $query = $args;
+        $query = $qs;
     }
 
     if ($query) {
         $parts['query'] = http_build_query($query);
     }
 
+    url:
     return $schema . $host . $parts['path'] .
         (isset($parts['query']) ? '?' . $parts['query'] : null) .
         (isset($parts['fragment']) ? '#' . $parts['fragment'] : null);
