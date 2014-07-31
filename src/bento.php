@@ -32,6 +32,7 @@ function config($key = null, $value = null)
         '_flash'  => '_flash',
         '_csrf'   => '_csrf',
         '_method' => '_method',
+        '_route'  => null,
     );
 
     if (func_num_args() > 1) {
@@ -333,6 +334,19 @@ function route_match($route, $path, &$matches = null, &$redirect = null)
         ($trailing ? '?' : null) . '$#',
         urldecode($path), $matches
     );
+}
+
+/**
+ * Returns the request route or tests if the current request route matches the
+ * on given as argument.
+ *
+ * @param string $test Expected request route (optional)
+ *
+ * @return mixed Either a string representing the request route or a bool
+ */
+function request_route($test = null)
+{
+    return isset($test) ? config('_route') === $test : config('_route');
 }
 
 /**
@@ -1553,6 +1567,8 @@ function dispatch($method, $path)
                     ('?' . $_SERVER['QUERY_STRING']) : ''));
                 redirect($url, 301);
             }
+
+            config('_route', $route);
 
             if ($method === 'HEAD') {
                 if (isset($methods['HEAD'])) {
