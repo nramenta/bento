@@ -144,16 +144,24 @@ function flash_redirect($vars, $url = null, $code = 302, $delay = null)
 }
 
 /**
- * Sets multiple flash values and redirects to the URL of a given path.
+ * Sets multiple flash values and redirects to the URL of a given route or path.
  *
- * @param array  $vars  Flash variables
- * @param string $path  Redirect path; defaults to current request path
- * @param int    $code  HTTP redirect code; defaults to 302
- * @param int    $delay Refresh header value in seconds (optional)
+ * @param array  $vars   Flash variables
+ * @param string $route  Redirect route or path
+ * @param array  $params Route params (optional)
+ * @param int    $code   HTTP redirect code; defaults to 302
+ * @param int    $delay  Refresh header value in seconds (optional)
  */
-function flash_redirect_to($vars, $path, $code = 302, $delay = null)
+function flash_redirect_to($vars, $route, $params = array(), $code = 302,
+    $delay = null)
 {
-    return flash_redirect($vars, url_for($path), $code, $delay);
+    if (!is_array($params)) {
+        $code = $params;
+        $params = array();
+        if (func_num_args() > 3) $delay = $code;
+    }
+
+    return flash_redirect($vars, url_for($route, $params), $code, $delay);
 }
 
 /**
@@ -346,7 +354,24 @@ function route_match($route, $path, &$matches = null, &$redirect = null)
  */
 function request_route($test = null)
 {
-    return isset($test) ? config('_route') === $test : config('_route');
+    if (isset($test)) {
+        if (!is_array($test)) {
+            $test = array($test);
+        }
+        $routes = array();
+        foreach ($test as $route) {
+            if (strpos($route, '/') !== 0) {
+                $name = $route;
+                if (($route = route_for($name)) === null) {
+                    throw new \Exception("named route $name not found");
+                }
+            }
+            $routes[] = $route;
+        }
+        return in_array(config('_route'), $routes, true);
+    } else {
+        return config('_route');
+    }
 }
 
 /**
@@ -512,6 +537,11 @@ function url_for($route = null, $params = array(), $append_qs = true)
 
     if (!isset($route)) {
         $route = request_path();
+    } elseif (strpos($route, '/') !== 0) {
+        $name  = $route;
+        if (($route = route_for($route)) === null) {
+            throw new \Exception("named route $name not found");
+        }
     }
 
     $qs = $params;
@@ -537,10 +567,6 @@ function url_for($route = null, $params = array(), $append_qs = true)
             throw new \Exception('missing route parameter ' . $match['name']);
         }
     };
-
-    if (!isset($path)) {
-        $path = request_path();
-    }
 
     static $pattern = '/<(?:(?P<rule>.+?):)?(?P<name>[a-z_][a-z0-9_]+)>/i';
 
@@ -597,12 +623,47 @@ function route($methods = null, $routes = null, $callback = null)
         }
 
         foreach ($routes as $route) {
+
+            if (strpos($route, '/') !== 0) {
+                $name = $route;
+                if (($route = route_for($name)) === null) {
+                    throw new \Exception("named route $name not found");
+                }
+            }
+
             foreach ($methods as $method) {
                 $callbacks[$route][$method] = $callback;
             }
         }
+
     } else {
         return $callbacks;
+    }
+}
+
+/**
+ * Gets or sets named routes. Pass null to return the current request route.
+ * Call this function without any arguments to return the array of named routes.
+ *
+ * @param string $name  Route name
+ * @param string $route Route
+ *
+ * @return string|null Route or null if the specified route is not found
+ */
+function route_for($name = null, $route = null)
+{
+    static $routes = array();
+
+    if (func_num_args() > 1) {
+        $routes[$name] = $route;
+    } elseif (func_num_args()) {
+        if (isset($name)) {
+            return isset($routes[$name]) ? $routes[$name] : null;
+        } else {
+            return request_route();
+        }
+    } else {
+        return $routes;
     }
 }
 
@@ -844,18 +905,25 @@ function redirect($url = null, $code = 302, $delay = null)
 }
 
 /**
- * Redirects to the URL of a given path. Acts as a wrapper for the `redirect()`
- * function.
+ * Redirects to the URL of a given route or path. Acts as a wrapper for the
+ * `redirect()` function.
  *
- * @param string $path  Redirect path
- * @param int    $code  HTTP redirect code; defaults to 302
- * @param int    $delay Refresh header value in seconds (optional)
+ * @param string $route  Redirect route or path
+ * @param array  $params Route params (optional)
+ * @param int    $code   HTTP redirect code; defaults to 302
+ * @param int    $delay  Refresh header value in seconds (optional)
  *
  * @return bool Boolean true if time delay is given
  */
-function redirect_to($path, $code = 302, $delay = null)
+function redirect_to($route, $params = array(), $code = 302, $delay = null)
 {
-    return redirect(url_for($path), $code, $delay);
+    if (!is_array($params)) {
+        $code = $params;
+        $params = array();
+        if (func_num_args() > 2) $delay = $code;
+    }
+
+    return redirect(url_for($route, $params), $code, $delay);
 }
 
 // ## CSRF protection
