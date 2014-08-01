@@ -360,13 +360,7 @@ function request_route($test = null)
         }
         $routes = array();
         foreach ($test as $route) {
-            if (strpos($route, '/') !== 0) {
-                $name = $route;
-                if (($route = route_for($name)) === null) {
-                    throw new \Exception("named route $name not found");
-                }
-            }
-            $routes[] = $route;
+            $routes[] = route_for($route);
         }
         return in_array(config('_route'), $routes, true);
     } else {
@@ -535,14 +529,7 @@ function url_for($route = null, $params = array(), $append_qs = true)
         $route = request_route();
     }
 
-    if (!isset($route)) {
-        $route = request_path();
-    } elseif (strpos($route, '/') !== 0) {
-        $name  = $route;
-        if (($route = route_for($route)) === null) {
-            throw new \Exception("named route $name not found");
-        }
-    }
+    $route = isset($route) ? route_for($route) : request_path();
 
     $qs = $params;
 
@@ -624,12 +611,7 @@ function route($methods = null, $routes = null, $callback = null)
 
         foreach ($routes as $route) {
 
-            if (strpos($route, '/') !== 0) {
-                $name = $route;
-                if (($route = route_for($name)) === null) {
-                    throw new \Exception("named route $name not found");
-                }
-            }
+            $route = route_for($route);
 
             foreach ($methods as $method) {
                 $callbacks[$route][$method] = $callback;
@@ -658,7 +640,15 @@ function route_for($name = null, $route = null)
         $routes[$name] = $route;
     } elseif (func_num_args()) {
         if (isset($name)) {
-            return isset($routes[$name]) ? $routes[$name] : null;
+            if (strpos($name, '/') === 0) {
+                return $name;
+            } else {
+                if (isset($routes[$name])) {
+                    return $routes[$name];
+                } else {
+                    throw new \Exception("named route $name not found");
+                }
+            }
         } else {
             return request_route();
         }
