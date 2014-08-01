@@ -348,7 +348,7 @@ function route_match($route, $path, &$matches = null, &$redirect = null)
  * Returns the request route or tests if the current request route matches the
  * on given as argument.
  *
- * @param string $test Expected request route (optional)
+ * @param array|string $test Expected request route(s) (optional)
  *
  * @return mixed Either a string representing the request route or a bool
  */
@@ -378,7 +378,7 @@ function request_route($test = null)
  * Returns the request method or tests if the current request method matches the
  * one given as argument. Request methods are *case sensitive*.
  *
- * @param string $test Expected request method (optional)
+ * @param array|string $test Expected request method(s) (optional)
  *
  * @return mixed Either a string representing the request method or a bool
  */
