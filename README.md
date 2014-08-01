@@ -147,6 +147,31 @@ Routes are matched first-only, meaning if a route matches the request path then
 its route handler will be executed and no more routes will be matched. Requests
 that do not match any routes will yield a "404 Not Found" error.
 
+### Named Routes
+
+You can assign names to routes by using the `route_for` function:
+
+```php
+<?php
+route_for('user.edit', '/users/<id>');
+
+get('user.edit', function() {
+    // display user edit/update form
+});
+```
+
+The functions `url_for`, `flash_redirect_to` and `redirect_to` accept named
+routes:
+
+```php
+<?php
+route_for('user.edit', '/users/<id>');
+
+url_for('user.edit', array('id' => 42));
+```
+
+To get the current request route, use the `request_route` function.
+
 ### Automatic 301 redirection
 
 For every route that ends in a forward slash, any request for that route
