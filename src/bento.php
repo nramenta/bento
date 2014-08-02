@@ -527,9 +527,9 @@ function url_for($route = null, $params = array(), $append_qs = true)
         $append_qs = $num_args > 1 ? $params : $append_qs;
         $params = $route;
         $route = request_route();
+    } else {
+        $route = isset($route) ? route_for($route) : request_path();
     }
-
-    $route = isset($route) ? route_for($route) : request_path();
 
     $qs = $params;
 
