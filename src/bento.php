@@ -102,11 +102,17 @@ function flash($key = null, $value = null, $keep = true)
 {
     static $storage = array();
 
-    if (!isset($_SESSION)) session_start();
+    if (($num_args = func_num_args()) === 0) {
+        return $storage;
+    }
+
+    if (!isset($_SESSION)) {
+        session_start();
+    }
 
     $flash = config('_flash');
 
-    if (func_num_args() > 1) {
+    if ($num_args > 1) {
         $old = isset($_SESSION[$flash][$key]) ? $_SESSION[$flash][$key] : null;
         if (isset($value)) {
             $_SESSION[$flash][$key] = $value;
@@ -120,10 +126,8 @@ function flash($key = null, $value = null, $keep = true)
             unset($_SESSION[$flash][$key]);
         }
         return $old;
-    } elseif (func_num_args()) {
-        return isset($_SESSION[$flash][$key]) ? $_SESSION[$flash][$key] : null;
     } else {
-        return $storage;
+        return isset($_SESSION[$flash][$key]) ? $_SESSION[$flash][$key] : null;
     }
 }
 
@@ -176,8 +180,6 @@ function flash_redirect_to($vars, $route, $params = array(), $code = 302,
  */
 function flash_now($key = null, $value = null)
 {
-    if (!isset($_SESSION)) session_start();
-
     $flash = config('_flash');
 
     if (func_num_args() > 1) {
@@ -185,6 +187,9 @@ function flash_now($key = null, $value = null)
     } elseif (func_num_args()) {
         return flash($key);
     } else {
+        if (!isset($_SESSION)) {
+            session_start();
+        }
         return isset($_SESSION[$flash]) && is_array($_SESSION[$flash]) ?
             $_SESSION[$flash] : array();
     }
@@ -273,7 +278,9 @@ function flash_write($write = true)
         return;
     }
 
-    if (!isset($_SESSION)) session_start();
+    if (!isset($_SESSION)) {
+        session_start();
+    }
 
     $flash = config('_flash');
 
@@ -943,7 +950,9 @@ function redirect_to($route, $params = array(), $code = 302, $delay = null)
  */
 function csrf_token($renew = false)
 {
-    if (!isset($_SESSION)) session_start();
+    if (!isset($_SESSION)) {
+        session_start();
+    }
 
     $csrf = config('_csrf');
 
