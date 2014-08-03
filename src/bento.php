@@ -249,14 +249,30 @@ function flash_remove($key = null)
 }
 
 /**
- * Writes flash values to the session for persistence.
+ * Writes flash values to the session for persistence. This function is called
+ * automatically on shutdown. You can force it to not start a session -- which
+ * is necessary to write flash values to sessions -- by calling and passing it
+ * a false from your route handlers. This is sometimes needed if you do not want
+ * to use sessions on some requests (e.g., 404s, static pages) where opening a
+ * session is expensive and you want to postpone it as much as possible.
  *
- * This function is called automatically and *should never* be called manually.
+ * @param bool $write Set to false to not write flash values to session
  *
  * @return bool Boolean true on success, false otherwise
  */
-function flash_write()
+function flash_write($write = true)
 {
+    static $session_start = true;
+
+    if (func_num_args()) {
+        $session_start = $write;
+        return;
+    }
+
+    if (!$session_start) {
+        return;
+    }
+
     if (!isset($_SESSION)) session_start();
 
     $flash = config('_flash');
