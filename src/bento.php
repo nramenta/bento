@@ -6,6 +6,13 @@
  * @license http://en.wikipedia.org/wiki/MIT_License MIT
  */
 
+/**
+ * Triggered when calling the function pass()
+ * 
+ */
+class PassException extends Exception {
+}
+
 // ## Configuration
 
 /**
@@ -745,6 +752,13 @@ function shutdown()
     }
 }
 
+/**
+ * Pass execution to next available route.
+ */
+function pass()
+{
+    throw new \PassException;
+}
 
 // ## Redirection
 
@@ -1576,10 +1590,17 @@ function dispatch($method, $path)
                 }
             }
 
-            ($before = before()) && apply($before, $params);
-            apply($callback, $params);
-            ($after = after()) && apply($after, $params);
-            return;
+            $pass = false;
+            try {
+                ($before = before()) && apply($before, $params);
+                apply($callback, $params);
+                ($after = after()) && apply($after, $params);
+            } catch(\PassException $e) {
+                $pass = true;
+            }
+            if(!$pass) {
+                return;
+            }
         }
     }
     halt(404);
