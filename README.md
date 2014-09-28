@@ -32,6 +32,19 @@ Minimum .htaccess configuration for mod_rewrite:
     RewriteRule ^ index.php [L]
 </IfModule>
 ```
+Or, if you are not uploading to the root of your site:
+```
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # append %{ENV:REWRITE_BASE} to rules.
+    RewriteCond %{REQUEST_URI}::$1 ^(.*?/)(.*)::\2$
+    RewriteRule ^(.*)$ - [E=REWRITE_BASE:%1]
+    
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ %{ENV:REWRITE_BASE}index.php [L]
+</IfModule>
+```
 
 ### Nginx + PHP-FPM
 
