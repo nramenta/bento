@@ -1734,7 +1734,11 @@ function dispatch($method, $path)
             $pass = false;
             try {
                 ($before = before()) && apply($before, $params);
-                apply($callback, $params);
+                $response = apply($callback, $params);
+                if (is_array($response) || $response instanceof \JsonSerializable) {
+                    header('Content-Type: application/json');
+                    echo json_encode($response);
+                }
                 ($after = after()) && apply($after, $params);
             } catch(\PassException $e) {
                 $pass = true;
